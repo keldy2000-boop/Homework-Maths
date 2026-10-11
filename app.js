@@ -56,7 +56,7 @@ function showPicker(){
     const w=(K.weeks||[]).slice(-1)[0];
     let sub='No homework yet';
     if(w){const p=weekProgress(c,w);sub=`${w.title}: ${p.done} of ${p.n} done`;}
-    return `<button class="kid k${i%2}" data-c="${c}"><span class="av">${K.name[0]}</span><span><b>${K.name}</b><span>${sub}</span></span></button>`;
+    return `<button class="kid k${i%2}" data-c="${c}"><span class="av">${K.badge||K.name[0]}</span><span><b>${K.name}</b><span>${sub}</span></span></button>`;
   }).join('');
   showOnly(picker);
 }
@@ -72,8 +72,8 @@ const qlab=i=>Q[i]&&Q[i].n!=null?Q[i].n:i+1;
 /* ---- home ---- */
 function showHome(err){
   const K=kids()[KID];
-  document.title=K.name+"'s homework helper";
-  $('homeTitle').textContent=K.name+"'s homework helper";
+  document.title=K.name+' homework helper';
+  $('homeTitle').textContent=K.name+' homework helper';
   $('wkName').textContent=WEEK?weekLabel(WEEK):'';
   $('homeBody').hidden=!WEEK;
   $('noWork').hidden=!!WEEK;
@@ -351,8 +351,8 @@ function allSolved(){return Q.every((q,i)=>qStatus(i)!=='todo');}
 function offerResults(){$('toResults').hidden=!(allSolved()||cur===Q.length-1);}
 function showResults(){stopSpeak();showOnly(results);renderResults();}
 function renderResults(){
-  const N=Q.length,t=tally(),own=t.own.length,help=t.help.length,todo=t.todo.length,solved=own+help,name=kids()[KID].name;
-  $('resTitle').textContent=solved===N?`All done, ${name}!`:'Your results so far';
+  const N=Q.length,t=tally(),own=t.own.length,help=t.help.length,todo=t.todo.length,solved=own+help;
+  $('resTitle').textContent=solved===N?'All done, brilliant!':'Your results so far';
   const C=2*Math.PI*50,a=own/N*C,b=help/N*C;
   $('ringWrap').innerHTML=`<svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="50"/><circle class="ring-own" cx="60" cy="60" r="50" stroke-dasharray="${a.toFixed(2)} ${C.toFixed(2)}"/><circle class="ring-help" cx="60" cy="60" r="50" stroke-dasharray="${b.toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-a).toFixed(2)}"/></svg>`;
   const el=$('scoreNum');
@@ -413,5 +413,5 @@ HW.selfTest=(c,id)=>new Promise(res=>{
   });
 });
 
-/* old link (index-1.html) and old saved progress keep working: Year 6's first set uses store 'y6old' */
+/* old saved progress keeps working: Year 6's first set uses store 'y6old' */
 route();

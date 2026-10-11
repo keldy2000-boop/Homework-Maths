@@ -1,4 +1,4 @@
-# Year 6 & Year 4's homework helper
+# Year 6 & Year 4 homework helper
 
 ## Every week
 1. Take photos of the maths homework sheets.
@@ -7,11 +7,11 @@
 
 Claude reads the sheets, builds the questions with step-by-step help, tests them, puts them online, and sends you a list of answers to glance over.
 
-The girls open the same link as always:
+Links:
 - Year 6: https://keldy2000-boop.github.io/Homework-Maths/#year6
 - Year 4: https://keldy2000-boop.github.io/Homework-Maths/#year4
 
-Each girl sees her newest week first, and older weeks are listed under it. Progress is saved on the tablet, separately for each week.
+Each opens the newest week first, with older weeks listed under it. Progress is saved on the tablet, separately for each week.
 
 ## One-time setup (publishing)
 Needs Git and the GitHub CLI on this PC, signed in to the GitHub account that owns the `Homework-Maths` repo:

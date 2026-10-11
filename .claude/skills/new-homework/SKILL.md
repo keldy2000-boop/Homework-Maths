@@ -6,12 +6,13 @@ description: Turn this week's homework photos (in inbox/year6, inbox/year4) into
 # New homework from photos
 
 The parent's whole job is dropping photos into `inbox/` and saying "new homework". Do everything else.
-Children: **Year 6 (10, Year 5/6)** and **Year 4 (8, Year 3/4)**. UK primary maths: use UK words and methods
+Children (ids used everywhere): **`year6`** (age 10) and **`year4`** (age 8). The site is public: refer to them only as
+"Year 6" / "Year 4" in anything that gets published (files, commit messages), even if a sheet shows a name. UK primary maths: use UK words and methods
 (column method, "exchange" not "borrow", bus stop division, bar models, number lines, "lots of", ones/tens/hundreds).
 
 ## 1. Find the photos
 - Look in `inbox/year6/`, `inbox/year4/`, and loose files in `inbox/`.
-- Loose file: work out whose sheet it is from the name written on it or the level of the maths (times tables/number bonds/simple clocks = Year 4; long multiplication/fractions/decimals = Year 6). If you really can't tell, ask.
+- Loose file: work out whose sheet it is from the year/level printed on it or the maths (times tables/number bonds/simple clocks = year4; long multiplication/fractions/decimals = year6). If you really can't tell, ask.
 - Nothing there? Tell the parent to drop photos in `inbox\year6` or `inbox\year4` and stop.
 
 ## 2. Read the photos

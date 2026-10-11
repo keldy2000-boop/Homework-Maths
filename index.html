@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 <main>
@@ -109,8 +109,9 @@
   </section>
 </main>
 
-<script src="visuals.js"></script>
-<script src="homework/weeks.js"></script>
-<script src="app.js"></script>
+<script src="visuals.js?v=2"></script>
+<!-- the week list changes every week, so always fetch it fresh -->
+<script>document.write('<script src="homework/weeks.js?t='+Date.now()+'"><\/script>');</script>
+<script src="app.js?v=2"></script>
 </body>
 </html>

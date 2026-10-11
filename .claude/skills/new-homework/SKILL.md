@@ -70,6 +70,7 @@ Optional fields: `n:'3a'` (label when it isn't just the position), `long:true` (
 In `homework/weeks.js`, append to that child's `weeks` (newest LAST):
 `{id:'2026-10-12',title:'<short title, e.g. Adding & time>',date:'2026-10-12',file:'homework/year4/2026-10-12.js',count:<number of questions>,v:1}`
 If you later change a published week file, bump its `v` so tablets fetch the new version.
+If you ever change `app.js`, `visuals.js` or `style.css`, bump the `?v=` on them in `index.html` too.
 
 ## 6. Test it in the browser (required)
 - `preview_start` with name `homework` (serves this folder on http://localhost:8765).

@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Homework helper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#F3F6FA; --grid:#DCE7F3; --ink:#1F2D48; --muted:#5A6A86; --line:#BCCDE1;
+  --card:#FFFFFF; --soft:#EAF1FA;
+  --hun:#8257C9; --ten:#2F6FD0; --one:#F2A93B; --rose:#D63C72; --leaf:#1F8A55;
+  --on-ten:#FFFFFF; --hl-bg:rgba(214,60,114,.12); --mb:rgba(47,111,208,.2);
+  --pen:'Patrick Hand','Comic Sans MS','Chalkboard SE',cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10161F; --grid:#1E2A3B; --ink:#E7EDF7; --muted:#9DABC2; --line:#34465F;
+    --card:#171F2B; --soft:#1F2B3C;
+    --hun:#A688E8; --ten:#5C95EC; --one:#F4BB57; --rose:#F2709D; --leaf:#43C285;
+    --on-ten:#0E1A2E; --hl-bg:rgba(242,112,157,.16); --mb:rgba(92,149,236,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10161F; --grid:#1E2A3B; --ink:#E7EDF7; --muted:#9DABC2; --line:#34465F;
+  --card:#171F2B; --soft:#1F2B3C;
+  --hun:#A688E8; --ten:#5C95EC; --one:#F4BB57; --rose:#F2709D; --leaf:#43C285;
+  --on-ten:#0E1A2E; --hl-bg:rgba(242,112,157,.16); --mb:rgba(92,149,236,.25);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:'Andika','Trebuchet MS',system-ui,sans-serif;font-size:17px;line-height:1.45;-webkit-text-size-adjust:100%}
+main{max-width:560px;margin:0 auto;padding:18px 14px 44px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ten);outline-offset:2px}
+h1{font-size:2rem;line-height:1.1;margin:.5rem 0 .5rem}
+.intro{margin:0 0 1.2rem;color:var(--muted)}
+sup{font-size:.55em;line-height:0;vertical-align:super}
+
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tile{position:relative;display:flex;align-items:stretch;text-align:left;background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:0;min-height:3.8rem;overflow:hidden}
+.tile .n{width:2.3rem;flex:none;display:grid;place-items:center;font-weight:700;border-right:2px solid var(--ink)}
+.tile .tq{display:flex;align-items:center;flex-wrap:wrap;padding:.5rem .6rem;font-size:.98rem;line-height:1.25}
+.tile .star{position:absolute;top:2px;right:6px;color:var(--one);font-size:1.05rem}
+
+.lbar{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.link{background:none;border:0;padding:.45rem 0;color:var(--ten);font-weight:700}
+.link[disabled]{opacity:.3;cursor:default}
+.qnum{color:var(--muted);font-size:.95rem}
+.qbig{font-size:2rem;font-weight:700;line-height:1.3;margin:.3rem 0 .8rem}
+.qbox{display:inline-block;width:1.6em;height:1.1em;border:2px solid currentColor;border-radius:4px;vertical-align:-.12em}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.78em;line-height:1.05;margin:0 .08em}
+.frac>span:first-child{border-bottom:2px solid currentColor;padding:0 .18em}
+
+.stage{position:relative;border:2px solid var(--ink);border-radius:10px;min-height:250px;padding:20px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;overflow:hidden;
+  background-color:var(--card);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;background-position:-1px -1px}
+.saywrap{display:flex;gap:.7rem;align-items:flex-start;margin:.9rem 0 .8rem}
+#say{margin:0;flex:1;font-size:1.12rem;min-height:4.4em}
+.speak{flex:none;width:2.7rem;height:2.7rem;border-radius:50%;border:2px solid var(--ink);background:var(--card);display:grid;place-items:center;padding:0}
+.ctrl{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.btn{border:2px solid var(--ink);background:var(--card);border-radius:999px;padding:.6rem 1.2rem;font-weight:700;min-width:6.2rem}
+.btn.primary{background:var(--ten);border-color:var(--ten);color:var(--on-ten)}
+.btn[disabled]{opacity:.3;cursor:default}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--ten)}
+.replay{display:block;margin:.7rem auto 0;background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font-size:.95rem;padding:.3rem}
+.try{margin-top:1rem;background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:1rem}
+.tryhead{display:flex;align-items:center;justify-content:space-between}
+.try h2{margin:0 0 .6rem;font-size:1.3rem}
+.tryrow{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap}
+.ans{font:inherit;font-size:1.6rem;font-weight:700;width:8.5rem;padding:.25rem .4rem;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);text-align:center}
+.fhelp{margin:.5rem 0 0;color:var(--muted);font-size:.95rem}
+.fb{margin:.8rem 0 0;font-size:1.08rem;min-height:1.4em}
+.fb.ok{color:var(--leaf);font-weight:700}
+.fb.no{color:var(--rose)}
+.bigstar{font-size:2.2rem;color:var(--one);line-height:1}
+.qnav{display:flex;justify-content:space-between;margin-top:1.3rem}
+
+/* drawing pieces */
+.pen{font-family:var(--pen);font-size:1.45rem;line-height:1.25;text-align:center;color:var(--ink)}
+.pen.rose,.rose{color:var(--rose)}
+.row{display:flex;align-items:center;justify-content:center;gap:.4rem;flex-wrap:wrap}
+.nc{min-width:3.4rem;height:3.4rem;border:2px solid var(--ink);border-radius:10px;display:grid;place-items:center;font-size:1.8rem;font-weight:700;background:var(--card)}
+.nc.expr{padding:0 .7rem;font-size:1.5rem}
+.op{width:1.8rem;text-align:center;font-size:1.6rem;font-weight:700}
+.dot{display:inline-block;width:1.05rem;height:1.05rem;border-radius:50%;background:var(--ten)}
+.d-one{background:var(--one)}
+.groups{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+.grp{width:5.6rem;height:5.6rem;border:2px dashed var(--muted);border-radius:50%;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;align-content:center;gap:3px;padding:12px;background:var(--card)}
+.grp .dot{width:.95rem;height:.95rem}
+.grp.pick{border-style:solid;border-color:var(--rose);background:var(--hl-bg)}
+.pile24{display:grid;grid-template-columns:repeat(8,1rem);gap:5px}
+.pile24 .dot{width:1rem;height:1rem}
+.plates{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;max-width:20rem}
+.plates.small{gap:.28rem;max-width:19rem}
+.plate{width:3.6rem;height:3.6rem;border-radius:50%;background:var(--card);border:3px solid var(--line);box-shadow:inset 0 0 0 7px var(--soft);display:grid;place-items:center;font-family:var(--pen);font-size:1.6rem;color:var(--rose)}
+.plates.small .plate{width:1.55rem;height:1.55rem;border:2px solid var(--line);box-shadow:inset 0 0 0 3px var(--soft)}
+.sqg{display:grid;gap:2px}
+.tl{width:1.25rem;height:1.25rem;border-radius:2px;background:var(--ten)}
+.tl.big{width:1.55rem;height:1.55rem}
+.tl.blank{background:transparent}
+.tl.extra{background:transparent;border:2px dashed var(--rose)}
+.ctab{display:grid;grid-template-columns:auto auto;column-gap:.7rem;row-gap:.2rem;font-family:var(--pen);font-size:1.45rem;line-height:1.2}
+.cube3{width:7rem;height:auto}
+.cube3 polygon{stroke:var(--ink);stroke-width:1.5;stroke-linejoin:round}
+.cube3 .ct{fill:var(--one)}.cube3 .cl{fill:var(--ten)}.cube3 .cr2{fill:var(--hun)}
+.cube3 .cg line{stroke:rgba(255,255,255,.8);stroke-width:1.2}
+.sbar{display:grid;width:100%;max-width:22rem;height:2.6rem;border:2px solid var(--ink);background:var(--card)}
+.sbar>i{position:relative}
+.sbar>i.thick{border-left:2px solid var(--ink)}
+.sbar>i>b{position:absolute;inset:0;background:var(--ten)}
+.sbar>i>b.alt{background:var(--hun)}
+.sbar>i>b.rb{background:var(--rose)}
+.sbar>i>b.mb{background:var(--mb)}
+.sbar>i.thin::after{content:'';position:absolute;left:-1px;top:0;bottom:0;border-left:1.5px dashed var(--ink);z-index:1;opacity:0}
+.sbar>i.thin.on::after{opacity:1}
+.sbar>i.thin.grow::after{animation:growY .4s ease both;animation-delay:var(--d,0s)}
+.sbar.solid>i+i{border-left:1px solid var(--ink)}
+.stack{width:100%;max-width:22rem;display:flex;flex-direction:column;gap:6px}
+.halves{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:22rem;text-align:center;font-family:var(--pen);font-size:1.15rem;color:var(--muted)}
+.pvg{display:grid;border:2px solid var(--ink);border-radius:6px;background:var(--card);overflow:hidden}
+.pvgh{text-align:center;font-weight:700;font-size:.9rem;padding:.2rem 0;background:var(--soft);border-bottom:2px solid var(--ink)}
+.pvgc{height:3rem;display:grid;place-items:center;font-size:1.9rem;font-weight:700;border-left:1px solid var(--line)}
+.pvgc.ptc{border-left:0}
+.pvgc.jr{height:1.8rem}
+.pt{color:var(--rose);font-size:2.2rem}
+.jmp{font-family:var(--pen);font-weight:400;color:var(--rose);font-size:1.15rem}
+.faint{opacity:.25}
+.bm{width:100%;max-width:22rem;display:flex;flex-direction:column;gap:6px}
+.bm .whole,.bm .part{height:2.7rem;border:2px solid var(--ink);display:grid;place-items:center;font-weight:700;border-radius:4px;white-space:nowrap;overflow:hidden}
+.bm .whole{background:var(--soft);font-size:1.35rem}
+.bm .parts{display:flex}
+.bm .part{background:var(--card);font-size:1.1rem}
+.bm .part+.part{border-left:0}
+.bm .part.hatch{background:repeating-linear-gradient(45deg,var(--hl-bg) 0 6px,transparent 6px 12px),var(--card)}
+.bm .part.shade{background:var(--ten)}
+.bm .part.shade .rose{color:var(--on-ten)}
+.colm{--cw:2.5rem;display:grid;grid-template-columns:repeat(var(--c,1),var(--cw));font-size:2rem;font-weight:700;line-height:1}
+.colm>span{height:2.7rem;display:grid;place-items:center;position:relative;border-radius:6px}
+.colm>span.cr{height:1.6rem;font-family:var(--pen);font-weight:400;font-size:1.4rem;color:var(--rose)}
+.colm>.rule{grid-column:1/-1;border-top:3px solid var(--ink);margin:.25rem 0}
+.colm.tight{--cw:2.1rem;font-size:1.75rem}
+.colm.tight>span{height:2.35rem}
+.colm.tight>span.cr{height:1.4rem;font-size:1.25rem}
+.colm.tight .qb{width:1.7rem;height:2rem;font-size:1rem}
+.colm>span.on,.bus .c.on{background:var(--hl-bg);box-shadow:inset 0 0 0 2px var(--rose)}
+.rl{font-family:'Andika',sans-serif;font-size:.78rem;font-weight:700;color:var(--muted)}
+.qb{display:grid;place-items:center;width:2rem;height:2.3rem;border:2px dashed var(--muted);border-radius:6px;color:var(--muted);font-size:1.2rem;font-weight:400}
+.wr{font-family:var(--pen);font-weight:400;color:var(--rose);font-size:2.1rem;line-height:1}
+.sup{position:absolute;top:.1rem;left:.1rem;font-family:var(--pen);font-size:1.25rem;font-weight:400;color:var(--rose);line-height:1}
+.sub{position:absolute;bottom:0;left:0;font-family:var(--pen);font-size:1.15rem;font-weight:400;color:var(--rose);line-height:1}
+.strike::after{content:'';position:absolute;left:18%;right:18%;top:calc(50% - 1.5px);height:3px;border-radius:2px;background:var(--rose);transform:rotate(-40deg)}
+.strike.anim::after{animation:strikeA .4s ease both}
+.bus{display:grid;grid-template-columns:auto auto;font-size:2rem;font-weight:700;line-height:1}
+.bus .top{display:flex;padding-left:calc(.2rem + 3px)}
+.bus .dv{display:grid;place-items:center;padding-right:.35rem;height:2.9rem}
+.bus .in{display:flex;border-top:3px solid var(--ink);border-left:3px solid var(--ink);border-top-left-radius:12px;padding-left:.2rem}
+.bus .c{width:2.4rem;height:2.9rem;display:grid;place-items:center;position:relative;border-radius:6px}
+
+/* motion */
+@keyframes pop{0%{transform:scale(.2);opacity:0}65%{transform:scale(1.12);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes away{from{opacity:1;transform:scale(1)}to{opacity:.16;transform:scale(.8)}}
+@keyframes write{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes hop{0%{transform:translate(var(--hx,0),var(--hy,0));opacity:0}25%{opacity:1}100%{transform:none;opacity:1}}
+@keyframes slideK{from{transform:translateX(var(--hx,0))}to{transform:none}}
+@keyframes strikeA{from{transform:rotate(-40deg) scaleX(0)}to{transform:rotate(-40deg) scaleX(1)}}
+@keyframes growY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.pop{animation:pop .45s cubic-bezier(.3,1.3,.5,1) both;animation-delay:var(--d,0s)}
+.fade{animation:fade .5s ease both;animation-delay:var(--d,0s)}
+.away{animation:away .55s ease both;animation-delay:var(--d,0s)}
+.gone{opacity:.16;transform:scale(.8)}
+.write{animation:write .7s ease-out both;animation-delay:var(--d,0s)}
+.pulse{animation:pulse .6s ease both;animation-delay:var(--d,0s)}
+.hop{display:inline-block;animation:hop .9s cubic-bezier(.4,0,.2,1) both;animation-delay:var(--d,0s)}
+.slide{display:inline-block;animation:slideK 1s cubic-bezier(.5,0,.3,1) both;animation-delay:var(--d,0s)}
+@media (prefers-reduced-motion: reduce){
+  .pop,.fade,.away,.vanish,.write,.pulse,.swap,.hop,.slide,.nl .drawin,.strike.anim::after,.sbar>i.thin.grow::after{animation-duration:.01s!important;animation-delay:0s!important}
+}
+
+/* working-out pad and tries */
+.card{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:.9rem;margin-top:1rem}
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem}
+.cardhead h2{margin:0;font-size:1.2rem}
+.tools{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.6rem}
+.tool{border:2px solid var(--ink);background:var(--card);border-radius:999px;padding:.3rem .85rem;font-weight:700;font-size:.92rem}
+.tool[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.padwrap{position:relative;height:280px;border:1.5px solid var(--line);border-radius:6px;overflow:hidden;background-color:var(--card);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;background-position:-1px -1px}
+.padwrap.tall{height:520px}
+#pad{display:block;touch-action:none;cursor:crosshair}
+.link.small{font-size:.92rem;padding:.2rem 0}
+.tries{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:.9rem}
+.tries span{margin-right:2px}
+.tries i{width:13px;height:13px;border-radius:50%;border:2px solid var(--ten)}
+.tries i.on{background:var(--ten)}
+.tag{font-weight:700;font-size:.9rem;color:var(--muted)}
+.tag.ok{color:var(--leaf)}
+.locked{display:flex;gap:.7rem;align-items:center;color:var(--muted);border-style:dashed;border-color:var(--muted)}
+.locked p{margin:0}
+.howh{font-size:1.3rem;margin:1.5rem 0 .6rem}
+.again,#showHow{display:block;margin:1rem auto 0}
+.tile .star.help{color:var(--muted)}
+.reset{display:block;margin:1.4rem 0 0;background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:.3rem 0;font-size:.92rem}
+.fhelp{margin:.5rem 0 0;color:var(--muted);font-size:.95rem}
+.fin{display:inline-flex;flex-direction:column;align-items:center;gap:5px}
+.fin .ans{width:4rem}
+.fin hr{width:4.6rem;border:0;border-top:3px solid var(--ink);margin:0}
+
+/* results page */
+#results h1{margin:.6rem 0 1rem}
+#results h2{font-size:1.2rem;margin:1.7rem 0 .6rem}
+.scorecard{display:flex;align-items:center;gap:1.1rem;background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:1rem}
+.ring{width:7.5rem;height:7.5rem;flex:none;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:13}
+.ring-bg{stroke:var(--line)}
+.ring-own{stroke:var(--one);animation:ringIn 1s ease-out both}
+.ring-help{stroke:var(--muted);animation:ringIn .8s ease-out .9s both}
+@keyframes ringIn{from{stroke-dasharray:0 400}}
+.score b{display:block;font-size:3.2rem;line-height:1;font-weight:700}
+.score span{display:block;color:var(--muted);font-size:1rem;line-height:1.3;margin-top:.2rem}
+.resmsg{font-size:1.15rem;margin:1rem 0 0}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:1rem}
+.counts>div{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:.6rem .3rem;text-align:center}
+.counts b{display:block;font-size:1.7rem;line-height:1.1}
+.counts span{font-size:.85rem;color:var(--muted)}
+.counts .gold{color:var(--one)}
+.qgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.qc{aspect-ratio:1;border:2px solid var(--ink);border-radius:8px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:1rem;line-height:1;padding:0;min-width:0}
+.qc small{font-size:.85rem;margin-top:3px;font-weight:400;min-height:.85rem}
+.qc.own,.chip.own{background:var(--one);border-color:var(--one);color:#2A1E00}
+.qc.help,.chip.help{border-color:var(--muted)}
+.qc.todo,.chip.todo{border-style:dashed;border-color:var(--muted);color:var(--muted)}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.88rem;color:var(--muted);margin-top:.6rem}
+.topics{display:flex;flex-direction:column;gap:8px}
+.topic{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:.7rem .8rem}
+.topic .th{display:flex;justify-content:space-between;gap:.5rem;align-items:center;flex-wrap:wrap}
+.topic .tn{font-weight:700}
+.ttag{font-size:.82rem;font-weight:700;border-radius:999px;padding:.12rem .65rem}
+.ttag.strong{background:rgba(31,138,85,.15);color:var(--leaf)}
+.ttag.practise{background:var(--hl-bg);color:var(--rose)}
+.ttag.unfinished{background:var(--soft);color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:.55rem}
+.chip{min-width:2.2rem;height:2.2rem;border-radius:7px;border:2px solid var(--ink);background:var(--card);font-weight:700;font-size:.92rem;padding:0 .3rem}
+.resbtns{display:flex;flex-direction:column;align-items:stretch;gap:.6rem;margin-top:1.7rem}
+.toResults{display:block;margin-top:.8rem}
+.homebtns{margin-top:1.3rem}
+
+/* spellings */
+.tabs{display:flex;gap:4px;background:var(--soft);border:2px solid var(--ink);border-radius:999px;padding:4px;margin:.2rem 0 1.1rem}
+.tabbtn{flex:1;border:0;background:none;border-radius:999px;padding:.55rem .5rem;font-weight:700;font-size:1.02rem;color:var(--muted)}
+.tabbtn[aria-selected="true"]{background:var(--ink);color:var(--card)}
+.muted{color:var(--muted)}
+.splist h2{margin:0 0 .3rem;font-size:1.3rem}
+.splist p{margin:.4rem 0}
+.splist .btn{display:block;width:100%;margin-top:.7rem}
+mark.fx{background:var(--hl-bg);color:var(--rose);border-radius:4px;padding:0 .08em}
+.spcard{margin-top:.6rem}
+.sphear{display:flex;align-items:center;gap:.9rem}
+.hearbig{width:4.4rem;height:4.4rem;border-radius:50%;border:0;background:var(--ten);color:var(--on-ten);display:grid;place-items:center;flex:none;padding:0}
+.hearbig.speaking{animation:pulse 1s ease-in-out infinite}
+.hearopts{display:flex;flex-wrap:wrap;gap:.4rem}
+.spmean,.spsent{margin:.7rem 0 0;font-size:1.05rem}
+.spsent .gap{display:inline-block;width:4.5em;border-bottom:2px solid var(--ink);vertical-align:-.15em}
+.spstage{margin:1rem 0 .5rem;font-weight:700;font-size:1.08rem;text-align:center}
+.spline{min-height:3.5rem;border-bottom:3px solid var(--ink);font-size:2rem;font-weight:700;letter-spacing:.05em;display:flex;align-items:flex-end;justify-content:center;padding:.2rem .5rem;background:var(--card);border-radius:8px 8px 0 0;overflow-x:auto}
+.spline .ph{font-size:1.05rem;font-weight:400;color:var(--muted);letter-spacing:0;align-self:center}
+.caret{display:inline-block;width:2px;height:1.6rem;background:var(--ten);margin-left:2px;animation:blink 1s step-end infinite;align-self:center}
+@keyframes blink{50%{opacity:0}}
+.spboxes{display:flex;gap:4px;justify-content:center}
+.spbox{flex:1 1 0;max-width:2.6rem;min-width:0;height:3rem;border:2px solid var(--ink);border-radius:6px;display:grid;place-items:center;font-size:clamp(1.1rem,5.5vw,1.7rem);font-weight:700;background:var(--card)}
+.spbox.next{border-color:var(--ten);box-shadow:0 0 0 3px var(--mb)}
+.sptiles{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:1rem}
+.ltile{width:2.7rem;height:3rem;border-radius:8px;border:2px solid var(--ink);background:var(--one);color:#2A1E00;font-size:1.5rem;font-weight:700;padding:0;touch-action:manipulation}
+.ltile.used{visibility:hidden}
+.tilectl{display:flex;justify-content:center;gap:.5rem;margin-top:.7rem}
+.kb{display:flex;flex-direction:column;gap:6px;margin-top:1rem;user-select:none;-webkit-user-select:none}
+.kbrow{display:flex;gap:4px;justify-content:center}
+.key{flex:1 1 0;max-width:2.6rem;min-width:0;height:3rem;border-radius:7px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-size:1.3rem;font-weight:700;padding:0;box-shadow:0 2px 0 var(--line);touch-action:manipulation}
+.key:active{transform:translateY(2px);box-shadow:none;background:var(--soft)}
+.key.wide{flex:1.6 1 0;max-width:4.2rem;font-size:1.1rem}
+.spactions{display:flex;justify-content:center;margin-top:1rem}
+.spactions .btn{min-width:10rem}
+.spword{font-size:2.1rem;font-weight:700;letter-spacing:.04em;text-align:center;margin:.3rem 0;word-break:break-all}
+.spwas{text-align:center;color:var(--muted);margin:.2rem 0}
+.spwas s{color:var(--rose)}
+.spdots{display:flex;gap:5px;justify-content:center;margin:.3rem 0 0}
+.spdots i{width:11px;height:11px;border-radius:50%;background:var(--line)}
+.spdots i.cur{background:var(--ten)}
+.spdots i.r1{background:var(--one)}
+.spdots i.r2,.spdots i.r3{background:var(--muted)}
+.spdots i.r4{background:var(--rose)}
+.sprows{display:flex;flex-direction:column;gap:7px;margin-top:1rem}
+.sprow{display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding:.6rem .8rem;border:2px solid var(--ink);border-radius:10px;background:var(--card)}
+.sprow .w{font-weight:700;font-size:1.15rem}
+.sprow .tag{font-size:.85rem;white-space:nowrap}
+.sprow .tag.t1{color:var(--leaf)}
+.sprow .tag.t4{color:var(--rose)}
+.spres{display:flex;align-items:baseline;gap:.6rem;background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:1rem}
+.spres b{font-size:3rem;line-height:1}
+
+/* year 4 drawing pieces */
+.nc.wide{width:4.4rem}
+.nc.hl{box-shadow:0 0 0 4px var(--rose)}
+.nc.hl2{box-shadow:0 0 0 4px var(--ten)}
+.d-rose{background:var(--rose)}
+.dot.d-ghost{background:transparent;border:2px dashed var(--line)}
+.frames{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.fbox{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.tf{display:grid;grid-template-columns:repeat(5,1.75rem);grid-auto-rows:1.75rem;border:2px solid var(--ink);background:var(--card)}
+.tf>i{border:1px solid var(--line);display:grid;place-items:center}
+.rod{display:inline-block;width:.85rem;height:4.6rem;border-radius:3px;background-color:var(--ten);background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(10% - 1px),rgba(255,255,255,.6) calc(10% - 1px),rgba(255,255,255,.6) 10%)}
+.cube{display:inline-block;width:.85rem;height:.85rem;border-radius:2px;background:var(--one)}
+.pile{min-height:4.8rem;align-items:flex-end;gap:.35rem}
+.gap{width:.8rem}
+.grp.big{width:6.6rem;height:6.6rem}
+.grp .rod{height:3.2rem}
+.pile27{display:grid;grid-template-columns:repeat(9,1rem);gap:5px;min-height:3.6rem}
+.pile27 .dot{width:1rem;height:1rem}
+.arr{display:flex;flex-direction:column;gap:4px}
+.arrrow{display:flex;gap:4px;align-items:center}
+.arr.big,.arr.big .arrrow{gap:9px}
+.arr.big .dot{width:1.7rem;height:1.7rem}
+.arr.sm,.arr.sm .arrrow{gap:3px}
+.arr.sm .dot{width:.9rem;height:.9rem}
+.arr.sm .d-ghost{border-width:1.5px}
+.arrlbl{font-family:var(--pen);font-size:1.35rem;color:var(--rose);min-width:2.4rem;padding-left:.45rem}
+.cookie{display:block;width:.7rem;height:.7rem;border-radius:50%;background:#B07A3E;box-shadow:inset -2px -2px 0 rgba(0,0,0,.2)}
+.fwrap{width:100%;max-width:22rem}
+.fbar{display:grid;grid-template-columns:repeat(9,1fr);height:3.2rem;border:2px solid var(--ink);background:var(--card)}
+.fbar>i{position:relative;border-left:2px solid var(--ink)}
+.fbar>i:first-child{border-left:0}
+.fbar>i>b{position:absolute;inset:0;background:var(--ten)}
+.fnums{display:grid;grid-template-columns:repeat(9,1fr);text-align:center;font-family:var(--pen);color:var(--muted);font-size:1.05rem}
+.pv{display:grid;grid-template-columns:repeat(3,1fr);width:100%;max-width:22rem;border:2px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--card)}
+.pv>div{display:flex;flex-direction:column;border-left:2px solid var(--ink)}
+.pv>div:first-child{border-left:0}
+.pvh{text-align:center;font-weight:700;font-size:.9rem;padding:.25rem;border-bottom:2px solid var(--ink);background:var(--soft)}
+.pvc{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-content:flex-start;padding:8px 3px;min-height:5rem;flex:1}
+.pvd{text-align:center;font-size:1.6rem;font-weight:700;border-top:2px solid var(--ink);padding:.1rem}
+.pvd>span{display:inline-block}
+.disc{width:1.75rem;height:1.75rem;border-radius:50%;display:grid;place-items:center;font-size:.58rem;font-weight:700;color:#fff}
+.disc.h{background:var(--hun)}
+.disc.t{background:var(--ten)}
+.disc.o{background:var(--one);color:#2A1E00}
+.bm .whole.glowbox{box-shadow:0 0 0 3px var(--rose)}
+.mini{display:grid;grid-template-columns:4.4rem repeat(3,2.4rem);row-gap:6px;align-items:center;justify-items:center}
+.mh{font-weight:700;color:var(--muted);font-size:.95rem}
+.ml{font-family:var(--pen);font-size:1.3rem;justify-self:end;padding-right:.4rem}
+.zero{font-family:var(--pen);font-size:1.8rem;font-weight:400;color:var(--rose)}
+.nl{width:100%;max-width:24rem;height:auto;overflow:visible}
+.nl .axis,.nl .tick{stroke:var(--ink);stroke-width:2.5;stroke-linecap:round}
+.nl text{fill:var(--ink);font-family:'Andika',sans-serif;font-size:14px;font-weight:700;text-anchor:middle}
+.nl .lab{fill:var(--rose)}
+.nl .jl{fill:var(--muted);font-size:11px;font-weight:400}
+.nl .arc{fill:none;stroke:var(--rose);stroke-width:3;stroke-linecap:round}
+.nl .drawin{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .55s ease forwards;animation-delay:var(--d,0s)}
+.nl .pop{transform-box:fill-box;transform-origin:center}
+@keyframes vanish{to{opacity:0;transform:scale(.3)}}
+@keyframes swapIn{from{transform:translateX(var(--from))}to{transform:none}}
+@keyframes draw{to{stroke-dashoffset:0}}
+.vanish{animation:vanish .4s ease both;animation-delay:var(--d,0s)}
+.vanished{opacity:0}
+.swap{animation:swapIn 1s cubic-bezier(.6,0,.3,1) both;animation-delay:var(--d,0s)}
+.spres span{line-height:1.3}
+
+/* year picker */
+.yearbtns{display:flex;flex-direction:column;gap:12px;margin-top:1rem}
+.yearbtn{display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;text-align:left;background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:1.1rem 1.2rem}
+.yearbtn b{font-size:1.6rem;line-height:1.1}
+.yearbtn span{color:var(--muted)}
+.yearbtn:active{transform:translateY(2px)}
+.homehead{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+.yearchip{border:2px solid var(--ink);background:var(--card);border-radius:999px;padding:.35rem .9rem;font-weight:700;font-size:.95rem}
+</style>
+</head>
+<body>
+<main>
+  <section id="pick" hidden>
+    <h1>Homework helper</h1>
+    <p class="intro">Which year are you in?</p>
+    <div class="yearbtns">
+      <button class="yearbtn" data-y="y4"><b>Year 4</b><span>20 maths questions and ‘inter’ spellings</span></button>
+      <button class="yearbtn" data-y="y6"><b>Year 6</b><span>28 maths questions and ‘tial’ spellings</span></button>
+    </div>
+  </section>
+
+  <section id="home" hidden>
+    <div class="homehead"><h1>Homework helper</h1><button class="yearchip" id="yearChip" aria-label="Change year">Year 6 · Change</button></div>
+    <div class="tabs" role="tablist">
+      <button class="tabbtn" role="tab" id="tabMaths" aria-selected="true">Maths</button>
+      <button class="tabbtn" role="tab" id="tabSpell" aria-selected="false">Spellings</button>
+    </div>
+    <div id="mathsHome">
+    <p class="intro">Pick a question. Work it out on the squared paper, then type your answer. You get <b>3 tries</b>, and after that the step-by-step help unlocks. ★ means you got it on your own; ☆ means you got it with help.</p>
+    <div class="tiles" id="tiles"></div>
+    <div class="homebtns"><button class="btn primary" id="homeResults">See my results</button></div>
+    <button class="reset" id="reset">Start everything again</button>
+    </div>
+    <div id="spellHome" hidden>
+      <div class="card splist">
+        <h2 id="spTitle"></h2>
+        <p id="spRule"></p>
+        <p class="muted">You'll hear each word, what it means and a sentence with it in. Write it on your sheet, then type it here to check. If it's not quite right, you'll get a clue and another go.</p>
+        <button class="btn primary" id="spStart">Start the spelling test</button>
+        <button class="btn" id="spResume" hidden></button>
+        <button class="btn" id="spLastBtn" hidden>See my last results</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="lesson" hidden>
+    <div class="lbar">
+      <button class="link" id="homeBtn">‹ All questions</button>
+      <span class="qnum" id="qnum"></span>
+    </div>
+    <div class="qbig" id="qbig"></div>
+
+    <div class="card">
+      <div class="cardhead"><h2>Your working out</h2><button class="link small" id="tMore">More space</button></div>
+      <div class="tools" role="toolbar" aria-label="Drawing tools">
+        <button class="tool" id="tPen" aria-pressed="true">Pencil</button>
+        <button class="tool" id="tRub" aria-pressed="false">Rubber</button>
+        <button class="tool" id="tUndo">Undo</button>
+        <button class="tool" id="tClear">Clear</button>
+      </div>
+      <div class="padwrap" id="padwrap"><canvas id="pad" aria-label="Squared paper for your working out"></canvas></div>
+    </div>
+
+    <div class="card" id="answerCard">
+      <div class="cardhead"><h2>Your answer</h2><span class="tries" id="tries"></span></div>
+      <div class="tryrow"><span id="inputs"></span><button class="btn primary" id="check">Check</button><span id="stars"></span></div>
+      <p class="fhelp" id="fhelp" hidden>Type a fraction like 7/4, or a mixed number like 1 3/4.</p>
+      <p class="fb" id="fb" aria-live="polite"></p>
+      <button class="btn primary toResults" id="toResults" hidden>See my results</button>
+    </div>
+
+    <div class="card locked" id="locked">
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style="flex:none"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      <p>Step-by-step help unlocks after 3 tries. Use the squared paper to work it out first.</p>
+    </div>
+    <button class="btn" id="showHow" hidden>See how it works</button>
+
+    <div id="how" hidden>
+      <h2 class="howh">How to work it out</h2>
+      <div class="stage" id="stage"></div>
+      <div class="saywrap">
+        <p id="say" aria-live="polite"></p>
+        <button class="speak" id="speak" aria-label="Read this out loud">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="ctrl">
+        <button class="btn" id="prev">Back</button>
+        <div class="dots" id="dots"></div>
+        <button class="btn primary" id="next">Next</button>
+      </div>
+      <button class="replay" id="replay">Watch this step again</button>
+      <button class="btn primary again" id="again" hidden>Try the answer again</button>
+    </div>
+
+    <div class="qnav">
+      <button class="link" id="pq">‹ Previous question</button>
+      <button class="link" id="nq">Next question ›</button>
+    </div>
+  </section>
+
+  <section id="results" hidden>
+    <div class="lbar">
+      <button class="link" id="resBack">‹ All questions</button>
+      <span class="qnum">Results</span>
+    </div>
+    <h1 id="resTitle">Your results</h1>
+    <div class="scorecard">
+      <div id="ringWrap"></div>
+      <div class="score"><b id="scoreNum">0</b><span id="scoreOf"></span></div>
+    </div>
+    <p class="resmsg" id="resMsg"></p>
+    <div class="counts">
+      <div><b id="cOwn">0</b><span><span class="gold">★</span> On my own</span></div>
+      <div><b id="cHelp">0</b><span>☆ With help</span></div>
+      <div><b id="cTodo">0</b><span>Still to do</span></div>
+    </div>
+    <h2>Every question</h2>
+    <div class="qgrid" id="qgrid"></div>
+    <div class="legend"><span><span class="gold">★</span> on my own</span><span>☆ with help</span><span>dashed = still to do</span></div>
+    <h2>Topics</h2>
+    <div class="topics" id="topics"></div>
+    <div class="resbtns">
+      <button class="btn primary" id="retryHelp">Try my ☆ ones again on my own</button>
+      <button class="btn" id="goTodo">Do the ones still to do</button>
+    </div>
+  </section>
+  <section id="spellTest" hidden>
+    <div class="lbar">
+      <button class="link" id="spBack">‹ Spellings</button>
+      <span class="qnum" id="spNum"></span>
+    </div>
+    <div class="spdots" id="spDots"></div>
+    <div class="card spcard">
+      <div class="sphear">
+        <button class="hearbig" id="spHear" aria-label="Hear the word, its meaning and a sentence"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        <div class="hearopts">
+          <button class="tool" id="spWord">Just the word</button>
+          <button class="tool" id="spSlow">Say it slowly</button>
+        </div>
+      </div>
+      <p class="spmean"><b>Meaning:</b> <span id="spMean"></span></p>
+      <p class="spsent"><b>In a sentence:</b> <span id="spSent"></span></p>
+      <p class="fb no" id="spNoVoice" hidden>This device can't read words out loud. Ask a grown-up to read the word to you.</p>
+    </div>
+    <div class="spstage" id="spStage"></div>
+    <div id="spAnswer"></div>
+    <p class="fb" id="spFb" aria-live="polite" style="text-align:center"></p>
+    <div id="spTiles"></div>
+    <div class="kb" id="spKb"></div>
+    <div class="spactions">
+      <button class="btn primary" id="spCheck">Check</button>
+      <button class="btn primary" id="spNext" hidden>Next word ›</button>
+    </div>
+  </section>
+
+  <section id="spellResults" hidden>
+    <div class="lbar">
+      <button class="link" id="sprBack">‹ Spellings</button>
+      <span class="qnum">Spelling results</span>
+    </div>
+    <h1 id="sprTitle">Spelling results</h1>
+    <div class="spres"><b id="sprScore">0</b><span class="muted" id="sprOf"></span></div>
+    <p class="resmsg" id="sprMsg"></p>
+    <div class="sprows" id="sprRows"></div>
+    <div class="resbtns">
+      <button class="btn primary" id="sprTricky">Practise the tricky ones</button>
+      <button class="btn" id="sprAgain">Do the whole test again</button>
+    </div>
+  </section>
+</main>
+
+<script>/* ===== Year 4 questions ===== */
+const Q4=(function(){
+
+/* ---------- helpers ---------- */
+const BOX='<span class="qbox"></span>';
+const fr=(n,d)=>`<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+const D=t=>`style="--d:${t}s"`;
+// when an element appears (step k) and, optionally, is taken away (step r)
+function life(s,k,r=null,ad=0,rd=0,a='pop',rk='away'){
+  if(s<k) return null;
+  if(s===k) return {c:a,d:ad};
+  if(r!==null&&s===r) return {c:rk,d:rd};
+  if(r!==null&&s>r) return {c:rk==='away'?'gone':'vanished',d:0};
+  return {c:'',d:0};
+}
+const sty=(L,x='')=>`style="--d:${L.d}s;${x}"`;
+const el=(tag,cls,L,inner='',x='')=>L?`<${tag} class="${cls} ${L.c}" ${sty(L,x)}>${inner}</${tag}>`:'';
+const pen=(t,cls='',anim='',d=0)=>`<div class="pen ${cls} ${anim}" ${anim?D(d):''}>${t}</div>`;
+const R=(...c)=>({cells:c});
+const CR=(...c)=>({cells:c,cr:1});
+const QB={t:'<span class="qb">?</span>'};
+const hc=(t,on)=>({t,c:on?'on':''});
+const wd=(s,k,t,d=0)=>s>=k?{t:`<span class="wr ${s===k?'write':''}" ${s===k?D(d):''}>${t}</span>`}:QB;
+const carry=(s,k,t,d,hx,hy,on)=>s>=k?{t:`<span class="${s===k?'hop':''}" style="--d:${d}s;--hx:${hx};--hy:${hy}">${t}</span>`,c:on?'on':''}:{t:''};
+const dg=(t,a,d=0)=>`<span class="${a?'write':''}" ${a?D(d):''}>${t}</span>`;
+const MQ='<span class="rose">?</span>';
+
+function tf(n,col,anim,del){
+  let h='<div class="tf">';
+  for(let i=0;i<10;i++) h+='<i>'+(i<n?`<span class="dot ${col} ${anim?'pop':''}" ${anim?D(del(i)):''}></span>`:'')+'</i>';
+  return h+'</div>';
+}
+function colm(c,rows){
+  let h=`<div class="colm" style="--c:${c}">`;
+  for(const r of rows){
+    if(r==='-'){h+='<i class="rule"></i>';continue;}
+    for(const cell of r.cells){
+      const o=(cell&&typeof cell==='object')?cell:{t:cell||''};
+      h+=`<span class="${r.cr?'cr ':''}${o.c||''}">${o.t||''}</span>`;
+    }
+  }
+  return h+'</div>';
+}
+function pvChart(s,k,cnt,rem,digits){
+  const cols=[['h','Hundreds','100'],['t','Tens','10'],['o','Ones','1']];
+  const base={h:0,t:.5,o:.9};
+  let h=`<div class="pv ${s===k?'fade':''}">`;
+  for(const [key,name,val] of cols){
+    h+=`<div><div class="pvh">${name}</div><div class="pvc">`;
+    const n=cnt[key];
+    for(let i=0;i<n;i++){
+      let r=null,rd=0;
+      if(rem&&rem.col===key&&i>=n-rem.n){r=rem.step;rd=0.2+(i-(n-rem.n))*0.4;}
+      h+=el('span',`disc ${key}`,life(s,k,r,base[key]+i*0.07,rd),val);
+    }
+    h+='</div>';
+    if(digits) h+=`<div class="pvd">${digits[key]}</div>`;
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+function bar(s,k,whole,parts,kp,wcls=''){
+  let h=`<div class="bm"><div class="whole ${wcls} ${s===k?'fade':''}">${whole}</div>`;
+  if(s>=kp){
+    h+='<div class="parts">';
+    parts.forEach((p,i)=>{h+=`<div class="part ${p.c||''} ${s===kp?'pop':''}" style="flex:${p.f} 1 0px;--d:${s===kp?0.3+i*0.2:0}s">${p.t}</div>`;});
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+function busStop(s,o){
+  const wL=life(s,o.kw,null,0.3,0,'write');
+  const cL=life(s,o.kc,null,o.kc===o.kw?0.9:0.2,0,'hop');
+  return `<div class="bus ${s===o.k0?'fade':''}">
+    <span></span>
+    <div class="top"><span class="c">${wL?`<span class="wr ${wL.c}" ${sty(wL)}>${o.first}</span>`:''}</span><span class="c">${s>=o.kfin?QB.t:''}</span></div>
+    <span class="dv">${o.dv}</span>
+    <div class="in"><span class="c ${s===o.kw?'on':''}">${o.a}</span><span class="c ${s>=o.kfin?'on':''}">${cL?`<span class="sup ${cL.c}" ${sty(cL,'--hx:-2.3rem;--hy:0rem')}>${o.carry}</span>`:''}${o.b}</span></div>
+  </div>`;
+}
+function numberLine(s){
+  const X=n=>20+n*6.25;
+  let g='<svg class="nl" viewBox="0 0 340 112" role="img" aria-label="Number line from 0 to 48">';
+  g+='<line class="axis" x1="12" y1="80" x2="328" y2="80"/>';
+  for(let n=0;n<=48;n+=8) g+=`<line class="tick" x1="${X(n)}" y1="72" x2="${X(n)}" y2="88"/>`;
+  g+=`<text x="${X(0)}" y="106">0</text>`;
+  const kOf=j=>j===0?1:(j<5?2:3);
+  for(let j=0;j<6;j++){
+    const k=kOf(j); if(s<k) continue;
+    const a=X(j*8),b=X(j*8+8),m=(a+b)/2,an=s===k;
+    const d=an?(k===2?(j-1)*0.65:0.15):0;
+    g+=`<path class="arc ${an?'drawin':''}" pathLength="1" d="M${a} 78 Q${m} 24 ${b} 78" style="--d:${d}s"/>`;
+    g+=`<text class="jl ${an?'pop':''}" x="${m}" y="44" style="--d:${d+0.3}s">+8</text>`;
+    g+=`<text class="lab ${an?'pop':''}" x="${b}" y="106" style="--d:${d+0.45}s">${j*8+8}</text>`;
+  }
+  if(s<3) g+=`<text x="${X(48)}" y="106">48</text>`;
+  g+='</svg>';
+  const notes=['How many 8s fit into 48?','first jump: 8','16, 24, 32, 40…','…and 48!','How many jumps?'];
+  return g+pen(notes[s],'rose','write',s===2?2.4:0.5);
+}
+function miniX10(s,k){
+  const a=s===k;
+  return `<div class="mini ${a?'fade':''}" ${a?D(.6):''}>
+    <span></span><span class="mh">H</span><span class="mh">T</span><span class="mh">O</span>
+    <span class="ml">3 × 9</span><span></span>${QB.t}${QB.t}
+    <span class="ml">× 10</span>
+    <span class="${a?'hop':''}" style="--d:1.6s;--hx:2.4rem;--hy:0rem">${QB.t}</span>
+    <span class="${a?'hop':''}" style="--d:1.6s;--hx:2.4rem;--hy:0rem">${QB.t}</span>
+    <span class="${a?'pop':''}" style="--d:2.4s"><b class="zero">0</b></span>
+  </div>`;
+}
+
+/* ---------- the 20 questions ---------- */
+const Q=[
+{q:`5 + 8 + 5 = ${BOX}`,ans:18,
+ hint:"Not quite. Use the two 5s to make 10, then add on the 8.",
+ say:["Three numbers to add. Here's a clever trick: look for two numbers that make <b>10</b> first.",
+      "Spot the two 5s! 5 + 5 fills a whole ten frame. That makes 10.",
+      "Now there's just the 8 left to add on.",
+      "Your turn! What is 10 + 8? That's the number for the box."],
+ draw(s){
+  const ring=(k,c)=>s>=k?c:'';
+  let h=`<div class="row">
+    <span class="nc ${ring(1,'hl')} ${s===1?'pulse':''}">5</span><span class="op">+</span>
+    <span class="nc ${ring(2,'hl2')} ${s===2?'pulse':''}">8</span><span class="op">+</span>
+    <span class="nc ${ring(1,'hl')} ${s===1?'pulse':''}" ${D(.15)}>5</span></div><div class="frames">`;
+  if(s>=1) h+=`<div class="fbox">${tf(10,'d-rose',s===1,i=>0.4+i*0.12)}${pen('5 + 5 = 10','',s===1?'write':'',1.7)}</div>`;
+  if(s>=2) h+=`<div class="fbox">${tf(8,'',s===2,i=>0.2+i*0.12)}${pen('8','',s===2?'write':'',1.2)}</div>`;
+  h+='</div>';
+  if(s>=3) h+=pen('10 + 8 = ?','rose','fade');
+  return h;
+ }},
+
+{q:`3 × ${BOX} = 33`,ans:11,
+ hint:"Not quite. Look inside one group. How many tens and how many ones are there?",
+ say:["3 lots of a mystery number make 33. Let's share 33 into <b>3 equal groups</b>. One group will be the mystery number.",
+      "Here's 33 made from blocks: 3 tens and 3 ones.",
+      "Share the tens: one ten goes into each group.",
+      "Now share the ones: one cube goes into each group. Everything is shared out fairly!",
+      "Your turn! What is one group worth? That's the missing number."],
+ draw(s){
+  let h='<div class="row pile">';
+  if(s===0) h+=pen('33 shared into 3 groups');
+  for(let i=0;i<3;i++) h+=el('span','rod',life(s,1,2,i*0.15,0.3+i*0.5));
+  if(s>=1) h+='<span class="gap"></span>';
+  for(let i=0;i<3;i++) h+=el('span','cube',life(s,1,3,0.5+i*0.15,0.3+i*0.5));
+  h+='</div>';
+  if(s>=1) h+=pen('3 tens and 3 ones','',s===1?'write':'',0.9);
+  h+='<div class="groups">';
+  for(let g=0;g<3;g++){
+    h+=`<div class="grp ${s===0?'fade':''}" ${D(g*0.15)}>`;
+    h+=el('span','rod',life(s,2,null,0.3+g*0.5));
+    h+=el('span','cube',life(s,3,null,0.3+g*0.5));
+    h+='</div>';
+  }
+  h+='</div>';
+  if(s>=4) h+=pen('one group = ?','rose','fade');
+  return h;
+ }},
+
+{q:`4 × 4 = ${BOX}`,ans:16,
+ hint:"Not quite. Count on 4 more from 12. Use your fingers if it helps!",
+ say:["4 × 4 means <b>4 lots of 4</b>. Let's build it as an array: 4 rows with 4 dots in each row.",
+      "Row 1: 4 dots.",
+      "Row 2: count on 4 more. That's 8.",
+      "Row 3: count on 4 more. That's 12.",
+      "Row 4: count on 4 more from 12. Your turn! How many dots are there altogether?"],
+ draw(s){
+  let h='<div class="arr big">';
+  for(let r=0;r<4;r++){
+    h+='<div class="arrrow">';
+    for(let c=0;c<4;c++){const L=life(s,r+1,null,c*0.15);h+=L?`<span class="dot ${L.c}" ${sty(L)}></span>`:'<span class="dot d-ghost"></span>';}
+    const LL=life(s,r+1,null,0.7,0,'write');
+    h+=LL?`<span class="arrlbl ${LL.c}" ${sty(LL)}>${r<3?(r+1)*4:'?'}</span>`:'<span class="arrlbl"></span>';
+    h+='</div>';
+  }
+  return h+'</div>';
+ }},
+
+{q:`${BOX} = 438 − 20`,ans:418,
+ hint:"Not quite. Only the tens change. Start with 3 tens and take 2 away.",
+ say:["The box is on the left this time, and that's fine! The = sign means <b>is the same as</b>. So we just work out 438 − 20.",
+      "Make 438 in a place value chart: 4 hundreds, 3 tens and 8 ones.",
+      "20 is the same as 2 tens. So take away 2 of the tens.",
+      "The hundreds and the ones don't change. Your turn! What number is left?"],
+ draw(s){
+  let h=pen(`${BOX} is the same as 438 − 20`);
+  if(s>=1) h+=pvChart(s,1,{h:4,t:3,o:8},{col:'t',n:2,step:2},s>=3?{h:dg('4',s===3),t:dg(MQ,s===3,.2),o:dg('8',s===3,.4)}:null);
+  if(s>=2) h+=pen('take away 2 tens','rose',s===2?'write':'',1);
+  return h;
+ }},
+
+{q:`6 × 0 = ${BOX}`,ans:0,
+ hint:"Not quite. Look at the plates again. How many cookies can you see?",
+ say:["6 × 0 means <b>6 lots of 0</b>. Let's imagine some plates of cookies.",
+      "Here are 6 plates.",
+      "Now put 0 cookies on each plate. That's no cookies at all!",
+      "Your turn! How many cookies are there altogether?"],
+ draw(s){
+  if(s===0) return pen('6 lots of 0','','write',0.2);
+  let h='<div class="plates">';
+  for(let i=0;i<6;i++) h+=`<span class="plate ${s===1?'pop':''}" ${D(i*0.15)}>${s>=2?`<span class="${s===2?'pop':''}" ${D(0.3+i*0.25)}>0</span>`:''}</span>`;
+  h+='</div>';
+  return h+pen(['','6 plates','0 cookies on each plate','6 lots of 0 = ?'][s],s===3?'rose':'','write',s===2?2:0.4);
+ }},
+
+{q:`${fr(7,9)} − ${fr(2,9)} = ${BOX}`,ans:[5,9],frac:true,
+ hint:"Not quite. Count the shaded pieces that are left. The bottom number stays 9.",
+ say:["The bottom number is 9. It tells us the whole bar is cut into <b>9 equal pieces</b>. Each piece is one ninth.",
+      "Seven ninths means 7 of those pieces are shaded.",
+      "Take away two ninths: rub out 2 of the shaded pieces.",
+      "The pieces are still ninths, so the bottom number stays 9. Your turn! How many ninths are left?"],
+ draw(s){
+  let h=`<div class="fwrap"><div class="fbar ${s===0?'fade':''}">`;
+  for(let i=0;i<9;i++){
+    const L=i<7?life(s,1,i>=5?2:null,i*0.18,0.2+(i-5)*0.45):null;
+    h+=`<i>${L?`<b class="${L.c}" ${sty(L)}></b>`:''}</i>`;
+  }
+  h+='</div><div class="fnums">'+[1,2,3,4,5,6,7,8,9].map(n=>`<span>${n}</span>`).join('')+'</div></div>';
+  const labs=['9 equal pieces',`${fr(7,9)} shaded`,`${fr(7,9)} − ${fr(2,9)}`,`${fr('?',9)} left`];
+  return h+pen(labs[s],s===3?'rose':'','write',0.2);
+ }},
+
+{q:`${BOX} + 400 = 826`,ans:426,
+ hint:"Not quite. Take 4 hundreds away from 8 hundreds. The tens and ones stay the same.",
+ say:["Something add 400 makes 826. Let's draw it as a bar so we can see what's going on.",
+      "The whole bar is 826. It's made of two parts: the mystery number and 400.",
+      "To find a missing part, take the part you know away from the whole: 826 − 400.",
+      "Make 826 in a place value chart: 8 hundreds, 2 tens and 6 ones.",
+      "400 is the same as 4 hundreds. Take 4 of the hundreds away.",
+      "The tens and the ones don't change. Your turn! What's left? That's the missing number."],
+ draw(s){
+  let h=bar(s,0,'826',[{t:MQ,f:426},{t:'400',f:400}],1);
+  if(s>=2) h+=pen('826 − 400','',s===2?'write':'',0.2);
+  if(s>=3) h+=pvChart(s,3,{h:8,t:2,o:6},{col:'h',n:4,step:4},s>=5?{h:dg(MQ,s===5),t:dg('2',s===5,.2),o:dg('6',s===5,.4)}:null);
+  return h;
+ }},
+
+{q:`60 ÷ 2 = ${BOX}`,ans:30,
+ hint:"Not quite. Count the tens in one group. 1 ten is 10, 2 tens are 20…",
+ say:["60 ÷ 2 means <b>share 60 into 2 equal groups</b>.",
+      "60 is the same as 6 tens.",
+      "Share the tens out one at a time: one for this group, one for that group…",
+      "Your turn! How many tens are in each group? So what is each group worth?"],
+ draw(s){
+  let h='<div class="row pile">';
+  if(s===0) h+=pen('60 shared into 2 groups');
+  for(let i=0;i<6;i++) h+=el('span','rod',life(s,1,2,i*0.12,0.3+i*0.45));
+  h+='</div>';
+  if(s>=1) h+=pen('60 = 6 tens','',s===1?'write':'',0.8);
+  h+='<div class="groups">';
+  for(let g=0;g<2;g++){
+    h+=`<div class="grp big ${s===0?'fade':''}" ${D(g*0.15)}>`;
+    for(let j=0;j<3;j++) h+=el('span','rod',life(s,2,null,0.3+(j*2+g)*0.45));
+    h+='</div>';
+  }
+  h+='</div>';
+  if(s>=3) h+=pen('each group = ? tens','rose','fade');
+  return h;
+ }},
+
+{q:`${BOX} = ${fr(1,3)} of 27`,ans:9,
+ hint:"Not quite. Count the dots in just one group.",
+ say:["To find <b>one third</b>, we split something into 3 equal groups and look at just one group. It's the same as 27 ÷ 3.",
+      "Here are 27 counters.",
+      "Deal them out one at a time into 3 groups, just like dealing cards.",
+      "One group is one third. Your turn! How many counters are in one group?"],
+ draw(s){
+  let h=s===0?pen('27 shared into 3 equal groups','','write',0.2)
+    :'<div class="pile27">'+Array.from({length:27},(_,i)=>el('span','dot d-one',life(s,1,2,i*0.03,0.2+i*0.12))).join('')+'</div>';
+  h+='<div class="groups">';
+  for(let g=0;g<3;g++){
+    h+=`<div class="grp ${s>=3&&g===0?'pick':''} ${s===0?'fade':''}" ${D(g*0.15)}>`;
+    for(let j=0;j<9;j++) h+=el('span','dot d-one',life(s,2,null,0.2+(j*3+g)*0.12));
+    h+='</div>';
+  }
+  h+='</div>';
+  if(s>=3) h+=pen(`${fr(1,3)} of 27 = ?`,'rose','fade');
+  return h;
+ }},
+
+{q:`47 + 85 = ${BOX}`,ans:132,
+ hint:"Not quite. Check the tens: 4 + 8 + the 1 you carried. Remember, 10 tens make 1 hundred!",
+ say:["Column addition! Line the numbers up: tens under tens, ones under ones.",
+      "Always start with the ones: 7 + 5 = 12.",
+      "12 is 1 ten and 2 ones. Write the 2 in the ones column and carry the 1 over to the tens.",
+      "Now the tens: 4 + 8, plus the 1 you carried.",
+      "Your turn! Add up the tens. If you get 10 or more, the extra hundred goes in the hundreds column. What's the whole answer?"],
+ draw(s){
+  const o=s===1||s===2,t=s>=3;
+  let h=colm(4,[CR('','',carry(s,2,'1',0.7,'2.5rem','8.1rem',t),''),R('','',hc('4',t),hc('7',o)),R('+','',hc('8',t),hc('5',o)),'-',R('',QB,QB,wd(s,2,'2',0.1))]);
+  const notes=['','7 + 5 = 12','write 2, carry 1','4 + 8 + 1 = ?','4 + 8 + 1 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose',s<4?'write':'',0.2);
+  return h;
+ }},
+
+{q:`90 − 43 = ${BOX}`,ans:47,
+ hint:"Not quite. After the exchange, the ones are 10 − 3 and the tens are 8 − 4.",
+ say:["Column subtraction! Line up the numbers: tens under tens, ones under ones. Always start with the ones.",
+      "Ones: 0 − 3. Uh oh! We can't take 3 away from 0. We need to <b>exchange</b>.",
+      "Exchange 1 ten for 10 ones. The 9 tens become 8 tens, and the 0 ones become 10 ones.",
+      "Your turn! Work out 10 − 3 for the ones, then 8 − 4 for the tens. What's the whole answer?"],
+ draw(s){
+  const ex=s>=2,a=s===2;
+  const nine={t:'9',c:ex?('strike '+(a?'anim':'')):''};
+  const eight=ex?{t:`<span class="${a?'write':''}" ${a?D(0.5):''}>8</span>`}:'';
+  const zero={t:(ex?`<span class="sup ${a?'hop':''}" style="--d:1.1s;--hx:-2.5rem;--hy:0rem">1</span>`:'')+'0',c:(s===1||s===2)?'on':''};
+  let h=colm(3,[CR('',eight,''),R('',nine,zero),R('−','4',hc('3',s===1)),'-',R('',QB,QB)]);
+  const notes=['','0 − 3? Not enough ones!','1 ten → 10 ones','10 − 3 = ?   8 − 4 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose',s<3?'write':'',a?1.5:0.2);
+  return h;
+ }},
+
+{q:`6 × 9 × 5 = ${BOX}`,ans:270,
+ hint:"Not quite. 6 × 5 = 30. Then work out 3 × 9 and make it 10 times bigger.",
+ special:{243:"Close, but not quite! Try it this way: 6 × 5 = 30, then 3 × 9, then make it 10 times bigger."},
+ say:["Three numbers to multiply. Good news: we can multiply them in <b>any order</b>. So let's pick the easiest pair first!",
+      "6 and 5 make a great pair. Swap the 9 and the 5 so they sit together.",
+      "6 × 5 means 6 lots of 5. Count in 5s: 5, 10, 15, 20, 25, 30.",
+      "Now it's 30 × 9. Here's a trick: work out 3 × 9 first, then make it 10 times bigger.",
+      "Your turn! Work out 3 × 9. To make it 10 times bigger, move the digits one place to the left and put a 0 in the ones."],
+ draw(s){
+  let h='';
+  if(s===0) h+='<div class="row"><span class="nc">6</span><span class="op">×</span><span class="nc">9</span><span class="op">×</span><span class="nc">5</span></div>';
+  else if(s<=2){
+    h+=`<div class="row"><span class="nc hl ${s===1?'pulse':''}" ${D(1.1)}>6</span><span class="op">×</span><span class="nc hl ${s===1?'swap':''}" style="--from:6rem">5</span><span class="op">×</span><span class="nc ${s===1?'swap':''}" style="--from:-6rem">9</span></div>`;
+    if(s===2){
+      h+='<div class="arr">';
+      for(let r=0;r<6;r++){
+        h+='<div class="arrrow">';
+        for(let c=0;c<5;c++) h+=`<span class="dot pop" ${D(r*0.45+c*0.05)}></span>`;
+        h+=`<span class="arrlbl write" ${D(r*0.45+0.3)}>${(r+1)*5}</span></div>`;
+      }
+      h+='</div>'+pen('6 × 5 = 30','rose','write',3);
+    }
+  } else {
+    h+=`<div class="row"><span class="nc wide ${s===3?'pop':''}">30</span><span class="op">×</span><span class="nc ${s===3?'pop':''}" ${D(.15)}>9</span></div>`;
+    h+=miniX10(s,3);
+  }
+  return h;
+ }},
+
+{q:`48 ÷ 8 = ${BOX}`,ans:6,
+ hint:"Not quite. Count the jumps again. Each jump is one 8.",
+ say:["48 ÷ 8 asks: <b>how many 8s fit into 48?</b> Let's find out on a number line.",
+      "Start at 0 and jump along 8 at a time. First jump: 8.",
+      "Keep jumping in 8s: 16, 24, 32, 40…",
+      "…and 48! We landed exactly on 48.",
+      "Your turn! Count the jumps. How many 8s make 48?"],
+ draw(s){return numberLine(s);}},
+
+{q:`38 × ${BOX} = 0`,ans:0,
+ hint:"Not quite. If there's anything on the plates, the total can't be 0.",
+ say:["38 lots of a mystery number make <b>0</b>. Let's picture 38 plates.",
+      "What if we put 1 cookie on each plate?",
+      "That would make 38 cookies. Too many! We need 0 altogether, so take them all off.",
+      "Your turn! How many cookies must go on each plate to make 0 altogether? Question 5 might help!"],
+ draw(s){
+  let h='<div class="plates small">';
+  for(let i=0;i<38;i++){
+    const L=life(s,1,2,0.1+i*0.04,i*0.025,'pop','vanish');
+    h+=`<span class="plate ${s===0?'pop':''}" ${D(i*0.02)}>${L?`<span class="cookie ${L.c}" ${sty(L)}></span>`:''}</span>`;
+  }
+  h+='</div>';
+  return h+pen(['38 plates','38 lots of 1 = 38','we need 0 altogether','38 lots of ? = 0'][s],s===3?'rose':'','write',s===1?1.7:0.3);
+ }},
+
+{q:`${BOX} − 16 = 82`,ans:98,
+ hint:"Not quite. The missing number is the whole bar, so it must be bigger than 82. Add the two parts: 82 + 16.",
+ special:{66:"66 is 82 take away 16. But the missing number is the whole bar, so put the parts together instead: add 82 + 16."},
+ say:["Careful with this one! The box is the number we <b>start</b> with. We take 16 away from it and end up with 82.",
+      "Let's draw it. The starting number is the whole bar. We don't know it yet.",
+      "Take 16 away and you're left with 82. So 82 and 16 are the two parts of the whole bar.",
+      "To find the whole, put the parts back together. That means we <b>add</b>: 82 + 16.",
+      "Your turn! Work out 82 + 16. Then check: your answer take away 16 should make 82."],
+ draw(s){
+  let h=pen(`start with ${BOX}, take away 16, left with 82`);
+  if(s>=1) h+=bar(s,1,MQ,[{t:'82 left',f:80},{t:'16',f:20,c:'hatch'}],2,s>=3?'glowbox':'');
+  if(s>=3) h+=`<div class="${s===3?'fade':''}" ${D(.5)}>`+colm(3,[R('','8','2'),R('+','1','6'),'-',R('',QB,QB)])+'</div>';
+  return h;
+ }},
+
+{q:`37 × 2 = ${BOX}`,ans:74,
+ hint:"Not quite. In the tens, did you add the 1 you carried?",
+ say:["Short multiplication! Multiply each digit by 2. Always start with the ones.",
+      "Ones: 7 × 2 = 14.",
+      "14 is 1 ten and 4 ones. Write the 4 in the ones column and carry the 1 over to the tens.",
+      "Now the tens: 3 × 2, then add the 1 you carried.",
+      "Your turn! Work out the tens. What's the whole answer?"],
+ draw(s){
+  const o=s===1||s===2,t=s>=3;
+  let h=colm(3,[CR('',carry(s,2,'1',0.7,'2.5rem','8.1rem',t),''),R('',hc('3',t),hc('7',o)),R('×','',hc('2',true)),'-',R('',QB,wd(s,2,'4',0.1))]);
+  const notes=['','7 × 2 = 14','write 4, carry 1','3 × 2 + 1 = ?','3 × 2 + 1 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose',s<4?'write':'',0.2);
+  return h;
+ }},
+
+{q:`64 ÷ 4 = ${BOX}`,ans:16,
+ hint:"Not quite. How many 4s are in 24? Count in 4s: 4, 8, 12…",
+ say:["Bus stop method! The 4 waits outside the bus stop and 64 goes inside. Work from left to right.",
+      "How many 4s go into 6? One 4 fits, with 2 left over. Write the 1 on top of the 6.",
+      "Carry the 2 that's left over to the next digit. Now the 4 becomes 24.",
+      "Your turn! How many 4s go into 24? Write it on top. What's the whole answer?"],
+ draw(s){
+  let h=busStop(s,{dv:'4',a:'6',b:'4',k0:0,kw:1,kc:2,kfin:3,first:'1',carry:'2'});
+  const notes=['','one 4 in 6, 2 left over','2 and 4 make 24','24 ÷ 4 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose',s<3?'write':'',0.6);
+  return h;
+ }},
+
+{q:`11 × 12 = ${BOX}`,ans:132,
+ hint:"Not quite. 10 rows of 12 make 120. Then add one more row of 12.",
+ special:{121:"Close! 121 is 11 × 11. We need 11 × 12, so try 120 + 12."},
+ say:["11 × 12 means <b>11 rows of 12</b>. That's a lot of dots! Let's split it into 10 rows and 1 more row.",
+      "10 rows of 12 is 10 × 12. That's 120.",
+      "Now add 1 more row of 12. That's 12 more.",
+      "Your turn! What is 120 + 12?"],
+ draw(s){
+  let h='<div class="arr sm">';
+  for(let r=0;r<11;r++){
+    const k=r<10?1:2;
+    h+='<div class="arrrow">';
+    for(let c=0;c<12;c++){const L=life(s,k,null,r<10?r*0.12+c*0.015:c*0.06);h+=L?`<span class="dot ${r===10?'d-rose':''} ${L.c}" ${sty(L)}></span>`:'<span class="dot d-ghost"></span>';}
+    h+='</div>';
+  }
+  h+='</div>';
+  if(s>=1) h+=pen('blue: 10 × 12 = 120','',s===1?'write':'',1.4);
+  if(s>=2) h+=pen('pink: 1 × 12 = 12','rose',s===2?'write':'',0.8);
+  if(s>=3) h+=pen('120 + 12 = ?','rose','fade');
+  return h;
+ }},
+
+{q:`${BOX} ÷ 3 = 75`,ans:225,
+ hint:"Not quite. The answer must be bigger than 75. In the tens: 7 × 3, then add the 1 you carried.",
+ say:["The box is the number we <b>start</b> with. We share it into 3 equal groups and get 75 in each group.",
+      "Let's draw it: the whole bar is split into 3 equal parts, and each part is 75.",
+      "To find the whole, do the opposite of sharing. <b>Multiply</b>: 3 lots of 75 is 75 × 3.",
+      "Short multiplication. Ones: 5 × 3 = 15. Write the 5 and carry the 1.",
+      "Your turn! Tens: 7 × 3, then add the 1 you carried. What's the whole answer?"],
+ draw(s){
+  let h=pen(`${BOX} shared into 3 groups, 75 in each`);
+  if(s>=1) h+=bar(s,1,MQ,[{t:'75',f:1},{t:'75',f:1},{t:'75',f:1}],1);
+  if(s===2) h+=pen('3 lots of 75 = 75 × 3','rose','write',0.3);
+  if(s>=3) h+=`<div class="${s===3?'fade':''}">`+colm(4,[CR('','',carry(s,3,'1',1.2,'2.5rem','8.1rem',s>=4),''),R('','',hc('7',s>=4),hc('5',s===3)),R('×','','',hc('3',true)),'-',R('',QB,QB,wd(s,3,'5',0.7))])+'</div>';
+  if(s===3) h+=pen('5 × 3 = 15','rose','write',0.4);
+  if(s>=4) h+=pen('7 × 3 + 1 = ?','rose','fade');
+  return h;
+ }},
+
+{q:`${BOX} × 5 = 85`,ans:17,
+ hint:"Not quite. How many 5s are in 35? Count in 5s: 5, 10, 15…",
+ say:["Something times 5 makes 85. Let's draw it: <b>5 equal parts</b> make 85 altogether.",
+      "To find one part, do the opposite of multiplying. <b>Divide</b>: 85 ÷ 5. Let's use the bus stop.",
+      "How many 5s go into 8? One, with 3 left over. Write the 1 on top and carry the 3.",
+      "Your turn! How many 5s go into 35? Count in 5s if you need to. What's the whole answer?"],
+ draw(s){
+  let h=bar(s,0,'85',[0,1,2,3,4].map(()=>({t:MQ,f:1})),0);
+  if(s>=1) h+=busStop(s,{dv:'5',a:'8',b:'5',k0:1,kw:2,kc:2,kfin:3,first:'1',carry:'3'});
+  const notes=['','85 ÷ 5','one 5 in 8, 3 left over','35 ÷ 5 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose',s<3?'write':'',0.6);
+  return h;
+ }}
+];
+
+
+return Q;
+})();
+
+/* ===== Year 6 questions ===== */
+const Q6=(function(){
+
+/* ---------- helpers ---------- */
+const NB='\u00A0';
+const BOX='<span class="qbox"></span>';
+const fr=(n,d)=>`<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+const D=t=>`style="--d:${t}s"`;
+function life(s,k,r=null,ad=0,rd=0,a='pop'){
+  if(s<k) return null;
+  if(s===k) return {c:a,d:ad};
+  if(r!==null&&s===r) return {c:'away',d:rd};
+  if(r!==null&&s>r) return {c:'gone',d:0};
+  return {c:'',d:0};
+}
+const sty=(L,x='')=>`style="--d:${L.d}s;${x}"`;
+const el=(tag,cls,L,inner='')=>L?`<${tag} class="${cls} ${L.c}" ${sty(L)}>${inner}</${tag}>`:'';
+const pen=(t,cls='',anim='',d=0)=>`<div class="pen ${cls} ${anim}" ${anim?D(d):''}>${t}</div>`;
+const R=(...c)=>({cells:c});
+const CR=(...c)=>({cells:c,cr:1});
+const QB={t:'<span class="qb">?</span>'};
+const MQ='<span class="rose">?</span>';
+const hc=(t,on)=>({t,c:on?'on':''});
+const wd=(s,k,t,d=0)=>s>=k?{t:`<span class="wr ${s===k?'write':''}" ${s===k?D(d):''}>${t}</span>`}:QB;
+const carry=(s,k,t,d,hx,hy,on)=>s>=k?{t:`<span class="${s===k?'hop':''}" style="--d:${d}s;--hx:${hx};--hy:${hy}">${t}</span>`,c:on?'on':''}:{t:''};
+const rl=t=>({t:`<small class="rl">${t}</small>`});
+
+function colm(c,rows,cls=''){
+  const tpl=Array.isArray(c)?c.map(w=>w==='.'?'.9rem':'var(--cw)').join(' '):`repeat(${c},var(--cw))`;
+  let h=`<div class="colm ${cls}" style="grid-template-columns:${tpl}">`;
+  for(const r of rows){
+    if(r==='-'){h+='<i class="rule"></i>';continue;}
+    for(const cell of r.cells){
+      const o=(cell&&typeof cell==='object')?cell:{t:cell||''};
+      h+=`<span class="${r.cr?'cr ':''}${o.c||''}">${o.t||''}</span>`;
+    }
+  }
+  return h+'</div>';
+}
+function bar(s,k,whole,parts,kp,wcls=''){
+  let h=`<div class="bm"><div class="whole ${wcls} ${s===k?'fade':''}">${whole}</div>`;
+  if(s>=kp){
+    h+='<div class="parts">';
+    parts.forEach((p,i)=>{h+=`<div class="part ${p.c||''} ${s===kp?'pop':''}" style="flex:${p.f} 1 0px;--d:${s===kp?0.3+i*0.15:0}s">${p.t}</div>`;});
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+function bus(s,o){
+  const n=o.ds.length,hi=o.hl?o.hl(s):-1;
+  let top='',ins='';
+  for(let i=0;i<n;i++){
+    const tp=o.top[i];let c='';
+    if(tp){
+      if(tp.w!=null&&s>=tp.w) c=`<span class="wr ${s===tp.w?'write':''}" ${s===tp.w?D(.3):''}>${tp.t}</span>`;
+      else if(tp.q!=null&&s>=tp.q) c=QB.t;
+    }
+    top+=`<span class="c">${c}</span>`;
+    const cr=(o.carries||[]).find(x=>x.i===i);
+    const sup=(cr&&s>=cr.k)?`<span class="sup ${s===cr.k?'hop':''}" style="--d:${cr.d??0.8}s;--hx:-2.3rem;--hy:0rem">${cr.t}</span>`:'';
+    ins+=`<span class="c ${i===hi?'on':''}">${sup}${o.ds[i]}</span>`;
+  }
+  return `<div class="bus ${s===o.k0?'fade':''}"><span></span><div class="top">${top}</div><span class="dv">${o.dv}</span><div class="in">${ins}</div></div>`;
+}
+function pvGrid(s,o){
+  const W=o.cols.map(c=>c==='.'?0.9:2.3);
+  const X=[];let acc=0;W.forEach(w=>{X.push(acc+w/2);acc+=w;});
+  const dcols=o.cols.map((c,i)=>c==='.'?-1:i).filter(i=>i>=0);
+  const cells=o.cols.map(c=>c==='.'?'<b class="pt">.</b>':'');
+  const sh=s>=o.kShift;
+  for(const [k,dig] of Object.entries(o.from)){
+    const ci=+k;
+    if(!sh){cells[ci]=`<span>${dig}</span>`;continue;}
+    const ni=dcols[dcols.indexOf(ci)+o.shift];
+    const dx=(X[ci]-X[ni]).toFixed(2);
+    const faint=o.faint&&o.faint.i===ni&&s>=o.faint.k;
+    cells[ni]=`<span class="${s===o.kShift?'slide':''} ${faint?'faint':''}" style="--d:.3s;--hx:${dx}rem">${dig}</span>`;
+  }
+  (o.zeros||[]).forEach(z=>{if(s>=z.k)cells[z.i]=`<span class="rose ${s===z.k?'pop':''}" ${D(.3)}>0</span>`;});
+  let h=`<div class="pvg ${s===o.k0?'fade':''}" style="grid-template-columns:${W.map(w=>w+'rem').join(' ')}">`;
+  o.cols.forEach(c=>h+=`<span class="pvgh">${c==='.'?'':c}</span>`);
+  cells.forEach((c,i)=>h+=`<span class="pvgc ${o.cols[i]==='.'?'ptc':''}">${c}</span>`);
+  return h+'</div>';
+}
+function splitBar(s,o){
+  const N=o.n*o.m;
+  let h=`<div class="sbar ${s===o.k0?'fade':''}" style="grid-template-columns:repeat(${N},1fr)">`;
+  for(let i=0;i<N;i++){
+    const big=Math.floor(i/o.m),first=i%o.m===0;
+    const L=big<o.shade?life(s,o.kShade,null,big*0.25):null;
+    const on=!first&&s>=o.kSplit,grow=on&&s===o.kSplit;
+    h+=`<i class="${first&&i>0?'thick':''} ${first?'':'thin'} ${on?'on':''} ${grow?'grow':''}" ${grow?D(0.2+big*0.2):''}>${L?`<b class="${L.c}" ${sty(L)}></b>`:''}</i>`;
+  }
+  return h+'</div>';
+}
+function plainBar(N,shaded,cls=''){
+  let h=`<div class="sbar solid" style="grid-template-columns:repeat(${N},1fr)">`;
+  for(let i=0;i<N;i++) h+=`<i>${i<shaded?`<b class="${cls}"></b>`:''}</i>`;
+  return h+'</div>';
+}
+function isoCube(){
+  const A=[60,8],B=[112,38],C=[60,68],Dp=[8,38],F=[112,98],G=[60,128],H=[8,98];
+  const L=(p,q,t)=>[p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t];
+  const ln=(p,q)=>`<line x1="${p[0].toFixed(1)}" y1="${p[1].toFixed(1)}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}"/>`;
+  const pts=a=>a.map(p=>p.join(',')).join(' ');
+  let g=`<svg class="cube3 pop" viewBox="0 0 120 136" aria-hidden="true"><polygon class="ct" points="${pts([A,B,C,Dp])}"/><polygon class="cl" points="${pts([Dp,C,G,H])}"/><polygon class="cr2" points="${pts([C,B,F,G])}"/><g class="cg">`;
+  for(const t of [1/3,2/3]){
+    g+=ln(L(A,Dp,t),L(B,C,t))+ln(L(A,B,t),L(Dp,C,t));
+    g+=ln(L(Dp,C,t),L(H,G,t))+ln(L(Dp,H,t),L(C,G,t));
+    g+=ln(L(C,B,t),L(G,F,t))+ln(L(C,G,t),L(B,F,t));
+  }
+  return g+'</g></svg>';
+}
+function deal(s,n,groups,kDeal,kPick,picks){
+  // n counters dealt round-robin into groups
+  let h='<div class="groups">';
+  const per=n/groups;
+  for(let g=0;g<groups;g++){
+    h+=`<div class="grp ${s>=kPick&&picks.includes(g)?'pick':''}">`;
+    for(let j=0;j<per;j++) h+=el('span','dot d-one',life(s,kDeal,null,0.2+(j*groups+g)*0.1));
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+
+/* ---------- the 28 questions ---------- */
+const Q=[
+{q:`${BOX} = 30 × 0`,ans:0,
+ hint:"Not quite. 30 lots of nothing… how much is that altogether?",
+ say:["The box is on the left, and that's fine: = means <b>is the same as</b>. So just work out 30 × 0.",
+      "30 × 0 means 30 lots of nothing. Picture 30 plates with nothing on them.",
+      "Your turn! How much is on all 30 plates altogether?"],
+ draw(s){
+  let h=pen(`${BOX} is the same as 30 × 0`);
+  if(s>=1){h+='<div class="plates small">';for(let i=0;i<30;i++)h+=`<span class="plate ${s===1?'pop':''}" ${D(i*0.03)}></span>`;h+='</div>';}
+  if(s>=2) h+=pen('30 lots of 0 = ?','rose','fade');
+  return h;
+ }},
+
+{q:`9<sup>2</sup> = ${BOX}`,ans:81,special:{18:"Careful! 9² isn't 9 × 2. The little 2 means 9 × 9."},
+ hint:"Not quite. Work out 90 − 9.",
+ say:["The little ² means <b>squared</b>: a number times itself. So 9² means 9 × 9, <b>not</b> 9 × 2.",
+      "Picture it as a square of tiles, 9 wide and 9 tall.",
+      "Quick trick: if the square were 10 tiles wide, it would have 9 × 10 = 90 tiles.",
+      "But it's only 9 wide, so take away that extra column of 9 tiles.",
+      "Your turn! What is 90 − 9? That's 9²."],
+ draw(s){
+  let h='<div class="sqg" style="grid-template-columns:repeat(10,1.25rem)">';
+  for(let r=0;r<9;r++)for(let c=0;c<10;c++){
+    const L=c<9?life(s,1,null,r*0.12+c*0.012):life(s,2,3,r*0.08,r*0.06);
+    h+=L?`<span class="tl ${c===9?'extra':''} ${L.c}" ${sty(L)}></span>`:'<span class="tl blank"></span>';
+  }
+  h+='</div>';
+  const notes=['9² = 9 × 9','9 wide, 9 tall','10 wide: 9 × 10 = 90','90 − 9','9² = 90 − 9 = ?'];
+  return h+pen(notes[s],s>=2?'rose':'',s<4?'write':'',s===1?1.2:0.4);
+ }},
+
+{q:`${BOX} + 0.8 = 2`,ans:1.2,special:{2.8:"That's 2 + 0.8. The box is one of the parts, so take 0.8 away from 2 instead."},
+ hint:"Not quite. Count the unshaded tenths: one whole and how many tenths?",
+ say:["Something add 0.8 makes 2. Let's look at 2 wholes, each cut into tenths.",
+      "Each whole is 10 tenths, so 2 wholes is 20 tenths.",
+      "0.8 is 8 tenths. Shade those at the end.",
+      "The part that's left is the missing number. Your turn! It's 1 whole and how many tenths? Write it as a decimal."],
+ draw(s){
+  let h=pen(`${BOX} + 0.8 = 2`);
+  h+=`<div class="sbar ${s===0?'fade':''}" style="grid-template-columns:repeat(20,1fr)">`;
+  for(let i=0;i<20;i++){
+    const first=i%10===0,rose=i>=12;
+    const L=rose?life(s,2,null,(19-i)*0.12):life(s,3,null,i*0.05,0,'fade');
+    h+=`<i class="${first&&i>0?'thick':''} ${!first&&s>=1?'thin on':''} ${!first&&s===1?'grow':''}" ${s===1?D(i*0.03):''}>${L?`<b class="${rose?'rb':'mb'} ${L.c}" ${sty(L)}></b>`:''}</i>`;
+  }
+  h+='</div>';
+  if(s>=1) h+=`<div class="halves ${s===1?'fade':''}" ${D(.6)}><span>1 whole</span><span>1 whole</span></div>`;
+  const notes=['','2 wholes = 20 tenths','0.8 = 8 tenths','? = 1 whole and ? tenths'];
+  if(notes[s]) h+=pen(notes[s],s>=2?'rose':'','write',s===1?1:0.4);
+  return h;
+ }},
+
+{q:`800 ÷ 10 = ${BOX}`,ans:80,special:{8000:"That's 800 × 10. Dividing makes the number smaller."},
+ hint:"Not quite. Move each digit of 800 one place to the right.",
+ say:["Dividing by 10 makes a number 10 times smaller: every digit moves <b>one place to the right</b>. Let's watch it with 600 first.",
+      "Here's 600 in a place value grid.",
+      "÷ 10: every digit slides one place to the right. The 6 hundreds become 6 tens.",
+      "600 ÷ 10 = 60. The 0 that slid into the tenths isn't needed, so we leave it off.",
+      "Your turn! Do the same with 800 ÷ 10."],
+ draw(s){
+  let h=s===0?pen('÷ 10: every digit moves 1 place right','','write',.2):'';
+  if(s>=1) h+=pvGrid(s,{cols:['H','T','O','.','t'],from:{0:'6',1:'0',2:'0'},shift:1,k0:1,kShift:2,faint:{i:4,k:3}});
+  if(s===3) h+=pen('600 ÷ 10 = 60','rose','write',.4);
+  if(s>=4) h+=pen('Your turn: 800 ÷ 10 = ?','rose','fade');
+  return h;
+ }},
+
+{q:`49 = ${BOX}<sup>2</sup>`,ans:7,special:{24.5:"That's 49 ÷ 2. The little ² means a number times itself."},
+ hint:"Not quite. Count how many tiles wide the 49-tile square is.",
+ say:["We need a number that, times <b>itself</b>, makes 49. Imagine 49 tiles arranged in a perfect square. How wide is it?",
+      "Try 5: a 5 by 5 square has 25 tiles. Too small.",
+      "Try 6: a 6 by 6 square has 36 tiles. Still too small.",
+      "One size bigger gives exactly 49 tiles. Your turn! How many tiles wide is this square?"],
+ draw(s){
+  const n=[0,5,6,7][s],p=[0,0,5,6][s];
+  let h='<div class="sqg" style="grid-template-columns:repeat(7,1.55rem)">';
+  for(let r=0;r<7;r++)for(let c=0;c<7;c++){
+    const inside=r<n&&c<n,isNew=inside&&!(r<p&&c<p);
+    h+=inside?`<span class="tl big ${isNew?'pop':''}" ${isNew?D((r+c)*0.06):''}></span>`:'<span class="tl big blank"></span>';
+  }
+  h+='</div>';
+  const notes=['? × ? = 49','5 × 5 = 25: too small','6 × 6 = 36: too small','? × ? = 49'];
+  return h+pen(notes[s],s===3?'rose':'','write',.5);
+ }},
+
+{q:`5 = ${BOX} ÷ 9`,ans:45,
+ hint:"Not quite. The whole is 9 lots of 5.",
+ say:["The box is the number we <b>start</b> with. Split it into 9 equal groups and there are 5 in each group.",
+      "As a bar: the whole is split into 9 equal parts, and each part is worth 5.",
+      "To find the whole, do the opposite of dividing: <b>multiply</b>. That's 9 lots of 5.",
+      "Your turn! What is 9 × 5? Check: your answer ÷ 9 should give 5."],
+ draw(s){
+  let h=pen(`5 = ${BOX} ÷ 9`);
+  if(s>=1) h+=bar(s,1,MQ,Array.from({length:9},()=>({t:'5',f:1})),1);
+  if(s>=2) h+=pen(s===2?'9 lots of 5':'9 × 5 = ?','rose','write',.4);
+  return h;
+ }},
+
+{q:`90 × ${BOX} = 9000`,ans:100,special:{10:"Close! 90 × 10 only makes 900. Count the jumps again.",1000:"That would make 90 000. Count the jumps again."},
+ hint:"Not quite. Two jumps left is × 10, then × 10 again.",
+ say:["90 times something makes 9000. Let's see how far the 9 has to move.",
+      "In 90, the 9 is in the tens column.",
+      "In 9000, the 9 is in the thousands column. It has jumped 2 places to the left.",
+      "Each jump to the left means × 10. So 2 jumps means × 10, then × 10 again. Your turn! What did we multiply by?"],
+ draw(s){
+  let h='<div class="pvg" style="grid-template-columns:repeat(4,2.4rem)">';
+  ['Th','H','T','O'].forEach(c=>h+=`<span class="pvgh">${c}</span>`);
+  h+=`<span class="pvgc"></span><span class="pvgc"></span><span class="pvgc"><span class="${s>=1?'rose':''} ${s===1?'pulse':''}">9</span></span><span class="pvgc">0</span>`;
+  if(s>=2){
+    h+=`<span class="pvgc jr"><b class="jmp ${s===2?'pop':''}" ${D(1)}>×10</b></span><span class="pvgc jr"><b class="jmp ${s===2?'pop':''}" ${D(.5)}>×10</b></span><span class="pvgc jr"></span><span class="pvgc jr"></span>`;
+    h+=['9','0','0','0'].map((d,i)=>`<span class="pvgc"><span class="${i===0?'rose':''} ${s===2?'pop':''}" ${D(1.5+i*.1)}>${d}</span></span>`).join('');
+  }
+  h+='</div>';
+  const notes=['90 × ? = 9000','the 9 is in the tens','the 9 jumped 2 places left','× 10 × 10 = × ?'];
+  return h+pen(notes[s],s>=2?'rose':'','write',s===2?1.9:.4);
+ }},
+
+{q:`32.32 × 10 = ${BOX}`,ans:323.2,special:{32.32:"That's the same number. × 10 moves every digit one place left.",3232:"Too far! × 10 moves the digits just one place left."},
+ hint:"Not quite. Move every digit of 32.32 one place to the left. The decimal point stays still.",
+ say:["Multiplying by 10 makes a number 10 times bigger: every digit moves <b>one place to the left</b>. The decimal point stays still! Let's watch with 45.67 first.",
+      "Here's 45.67 in a place value grid.",
+      "× 10: every digit slides one place to the left.",
+      "45.67 × 10 = 456.7. The digits moved; the decimal point didn't.",
+      "Your turn! Do the same with 32.32 × 10."],
+ draw(s){
+  let h=s===0?pen('× 10: every digit moves 1 place left','','write',.2):'';
+  if(s>=1) h+=pvGrid(s,{cols:['H','T','O','.','t','h'],from:{1:'4',2:'5',4:'6',5:'7'},shift:-1,k0:1,kShift:2});
+  if(s===3) h+=pen('45.67 × 10 = 456.7','rose','write',.4);
+  if(s>=4) h+=pen('Your turn: 32.32 × 10 = ?','rose','fade');
+  return h;
+ }},
+
+{q:`${BOX} = ${fr(2,3)} of 24`,ans:16,special:{8:"That's one third. Two thirds is two of the groups."},
+ hint:"Not quite. Count the counters in two of the groups.",
+ say:["To find two thirds: first find <b>one third</b> by splitting into 3 equal groups. Then take <b>2</b> of those groups.",
+      "Deal the 24 counters into 3 equal groups.",
+      "Each group is one third. We want two thirds, so take 2 groups.",
+      "Your turn! How many counters are in 2 groups altogether?"],
+ draw(s){
+  let h='<div class="pile24">'+Array.from({length:24},(_,i)=>el('span','dot d-one',life(s,0,1,i*0.025,0.2+i*0.1))).join('')+'</div>';
+  h+=deal(s,24,3,1,2,[0,1]);
+  const notes=['24 counters','24 ÷ 3: one third each','2 groups = two thirds',`${fr(2,3)} of 24 = ?`];
+  return h+pen(notes[s],s>=2?'rose':'','write',s===1?2.6:.3);
+ }},
+
+{q:`3 × ${BOX} = 17 − 2`,ans:5,
+ hint:"Not quite. Count the dots in one group.",
+ say:["Both sides of = must be worth the same. Start with the side you can work out: 17 − 2.",
+      `17 − 2 = 15. So now we have 3 × ${BOX} = 15.`,
+      "3 lots of the mystery number make 15. Share 15 into 3 equal groups.",
+      "Your turn! How many are in each group?"],
+ draw(s){
+  let h=`<div class="row"><span class="nc expr">3 × ${BOX}</span><span class="op">=</span>${s>=1?`<span class="nc expr ${s===1?'pop':''}" ${D(.3)}>15</span>`:'<span class="nc expr">17 − 2</span>'}</div>`;
+  if(s>=2) h+=deal(s,15,3,2,3,[0]);
+  const notes=['work out 17 − 2 first','3 × ? = 15','15 shared into 3 groups','one group = ?'];
+  return h+pen(notes[s],s>=3?'rose':'','write',.5);
+ }},
+
+{q:`3248 ÷ 8 = ${BOX}`,ans:406,special:{46:"Careful, you've skipped the zero! When 8 doesn't go into 4, write a 0 on top."},
+ hint:"Not quite. Work out 32 ÷ 8 and 48 ÷ 8, and keep the 0 in the middle.",
+ say:["Bus stop method. 8 waits outside, and 3248 goes inside. Work from left to right.",
+      "How many 8s go into 3? None! So carry the 3 over to the next digit to make 32.",
+      "How many 8s go into 32? That goes on top of the 2.",
+      "Next, how many 8s go into 4? None! So write a <b>0</b> on top and carry the 4 to make 48. Don't skip the zero!",
+      "Your turn! Work out 32 ÷ 8 and 48 ÷ 8, keeping that 0 in the middle. What's the answer?"],
+ draw(s){
+  let h=bus(s,{dv:'8',ds:['3','2','4','8'],k0:0,top:[null,{q:2},{w:3,t:'0'},{q:4}],carries:[{i:1,t:'3',k:1},{i:3,t:'4',k:3,d:1}],hl:s=>[-1,0,1,2,3][s]});
+  const notes=['',"8 into 3? Doesn't go. Carry 3.",'32 ÷ 8 = ?',"8 into 4? Doesn't go. Write 0, carry 4.",'48 ÷ 8 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose','write',.6);
+  return h;
+ }},
+
+{q:`216 = ${BOX}<sup>3</sup>`,ans:6,special:{72:"Careful! ³ means a number × itself × itself, not × 3."},
+ hint:"Not quite. Try the number after 5: multiply it by itself, then by itself again.",
+ say:["The little ³ means <b>cubed</b>: a number times itself, then times itself again. It's like counting the little cubes in a big cube.",
+      "Let's list some cube numbers: 1³ = 1, 2³ = 8, 3³ = 27, 4³ = 64.",
+      "5³ = 5 × 5 × 5 = 125. Still too small, but we're getting close.",
+      "Your turn! Try the next number up. Tip: 216 ends in 6. Which number cubed ends in 6?"],
+ draw(s){
+  if(s===0) return isoCube()+pen('3 × 3 × 3 = 27 little cubes','','write',.5);
+  const rows=[['1 × 1 × 1','1'],['2 × 2 × 2','8'],['3 × 3 × 3','27'],['4 × 4 × 4','64'],['5 × 5 × 5','125'],['? × ? × ?','216']];
+  let h='<div class="ctab">';
+  rows.forEach((r,i)=>{
+    const k=i<4?1:i===4?2:3;
+    const L=life(s,k,null,k===1?i*0.35:0.2,0,'fade');
+    if(L){const c=`${L.c} ${i===5?'rose':''}`;h+=`<span class="${c}" ${sty(L)}>${r[0]}</span><span class="${c}" ${sty(L)}>= ${r[1]}</span>`;}
+  });
+  h+='</div>';
+  const notes=['','',"125 is too small, but we're close",'216 ends in 6…'];
+  if(notes[s]) h+=pen(notes[s],'rose','write',.6);
+  return h;
+ }},
+
+{q:`${fr(4,5)} + ${fr(16,15)} = ${BOX}`,ans:[28,15],frac:true,
+ hint:"Not quite. Change 4/5 into fifteenths first (× 3 top and bottom), then add the top numbers.",
+ say:["The denominators are different: fifths and fifteenths. We can only add fractions when the pieces are the <b>same size</b>.",
+      `Here's ${fr(4,5)}: a bar cut into 5 equal pieces, with 4 shaded.`,
+      "15 is 5 × 3, so cut every fifth into 3 smaller pieces. Now the bar is in fifteenths. That's the same as multiplying the top and the bottom by 3.",
+      `Now both fractions are in fifteenths. ${fr(16,15)} is one whole and one more fifteenth. To add, add the top numbers; the bottom stays 15.`,
+      "Your turn! Count the shaded fifteenths in the top bar, add 16, and put it over 15. It's bigger than 1, so you can write it as a mixed number too."],
+ draw(s){
+  let h=splitBar(s,{n:5,m:3,shade:4,k0:0,kShade:1,kSplit:2});
+  if(s<3){
+    const labs=[`${fr(4,5)} + ${fr(16,15)}`,`${fr(4,5)} shaded`,`${fr(4,5)} = ${fr('?',15)}`];
+    return h+pen(labs[s],s===2?'rose':'','write',s===2?1.4:.3);
+  }
+  h+=pen(`${fr(4,5)} = ${fr('?',15)}`,'rose');
+  h+=`<div class="stack ${s===3?'fade':''}" ${D(.3)}>${plainBar(15,15,'alt')}${plainBar(15,1,'alt')}</div>`;
+  h+=pen(s===3?`${fr(16,15)}: one whole and ${fr(1,15)}`:`${fr('?',15)} + ${fr(16,15)} = ${fr('?',15)}`,'rose','write',.7);
+  return h;
+ }},
+
+{q:`${BOX} = 800 − 524`,ans:276,special:{324:"Careful! You can't swap the digits round in a column. When the top digit is smaller, exchange from the next column."},
+ hint:"Not quite. After exchanging, work out 10 − 4, 9 − 2 and 7 − 5.",
+ say:["Work out 800 − 524 in columns. Start with the ones.",
+      "Ones: 0 − 4. Not enough ones! And there are no tens to exchange either, so we have to go to the hundreds.",
+      "Exchange 1 hundred for 10 tens. The 8 hundreds become 7, and the tens become 10.",
+      "Now exchange 1 of those tens for 10 ones. The tens become 9, and the ones become 10.",
+      "Your turn! Subtract each column: 10 − 4, 9 − 2 and 7 − 5. (Shortcut: 799 − 523 gives the same answer with no exchanging!)"],
+ draw(s){
+  const a2=s===2,a3=s===3;
+  const sup=(a)=>`<span class="sup ${a?'hop':''}" style="--d:.9s;--hx:-2.5rem;--hy:0rem">1</span>`;
+  let h=colm(4,[
+    CR('',s>=2?{t:`<span class="${a2?'write':''}" ${a2?D(.4):''}>7</span>`}:'',s>=3?{t:`<span class="${a3?'write':''}" ${a3?D(.4):''}>9</span>`}:'',''),
+    R('',{t:'8',c:s>=2?'strike '+(a2?'anim':''):''},
+         {t:(s>=2?sup(a2):'')+'0',c:(s>=3?'strike '+(a3?'anim':''):'')+(s===1?' on':'')},
+         {t:(s>=3?sup(a3):'')+'0',c:s===1?'on':''}),
+    R('−','5','2',hc('4',s===1)),
+    '-',
+    R('',QB,QB,QB)
+  ]);
+  const notes=['','0 − 4? No ones, and no tens either!','1 hundred → 10 tens','1 ten → 10 ones','10 − 4,   9 − 2,   7 − 5'];
+  if(notes[s]) h+=pen(notes[s],'rose',s<4?'write':'',(a2||a3)?1.4:.3);
+  return h;
+ }},
+
+{q:`${fr(5,7)} + ${fr(9,21)} = ${BOX}`,ans:[8,7],frac:true,
+ hint:"Not quite. Change 5/7 into twenty-firsts first (× 3 top and bottom), then add the top numbers.",
+ say:["Sevenths and twenty-firsts are different sized pieces. Let's make them the same.",
+      `Here's ${fr(5,7)}: a bar cut into 7 equal pieces, with 5 shaded.`,
+      "21 is 7 × 3, so cut every seventh into 3 smaller pieces. Now the bar is in twenty-firsts. That's multiplying the top and the bottom by 3.",
+      "Now both are twenty-firsts, so add the top numbers. The bottom stays 21.",
+      "Your turn! Add the top numbers and put them over 21. Then simplify: the top and bottom can both be divided by 3. You can write it as a mixed number too."],
+ draw(s){
+  let h=splitBar(s,{n:7,m:3,shade:5,k0:0,kShade:1,kSplit:2});
+  if(s<3){
+    const labs=[`${fr(5,7)} + ${fr(9,21)}`,`${fr(5,7)} shaded`,`${fr(5,7)} = ${fr('?',21)}`];
+    return h+pen(labs[s],s===2?'rose':'','write',s===2?1.8:.3);
+  }
+  h+=pen(`${fr(5,7)} = ${fr('?',21)}`,'rose');
+  h+=`<div class="stack ${s===3?'fade':''}" ${D(.3)}>${plainBar(21,9,'alt')}</div>`;
+  h+=pen(s===3?`+ ${fr(9,21)}`:`${fr('?',21)} + ${fr(9,21)} = ${fr('?',21)}, then simplify`,'rose','write',.7);
+  return h;
+ }},
+
+{q:`${fr(7,10)} of 80 = ${BOX}`,ans:56,special:{8:"That's one tenth. Now take 7 of those tenths."},
+ hint:"Not quite. One tenth of 80 is 80 ÷ 10. Then multiply that by 7.",
+ say:[`To find ${fr(7,10)} of 80: first find <b>one tenth</b> by dividing by 10. Then take 7 of those tenths.`,
+      "Split 80 into 10 equal parts. Each part is one tenth: 80 ÷ 10.",
+      "Now shade 7 of the parts. That's seven tenths.",
+      "Your turn! Work out one part (80 ÷ 10), then multiply it by 7."],
+ draw(s){
+  let h=`<div class="bm"><div class="whole ${s===0?'fade':''}">80</div>`;
+  if(s>=1){
+    h+='<div class="parts">';
+    for(let i=0;i<10;i++){const sh=s>=2&&i<7;h+=`<div class="part ${sh?'shade':''} ${s===1?'pop':''} ${s===2&&sh?'pulse':''}" style="flex:1 1 0px;--d:${s===1?0.2+i*0.08:s===2?i*0.2:0}s">${MQ}</div>`;}
+    h+='</div>';
+  }
+  h+='</div>';
+  const notes=[`${fr(7,10)} of 80`,'10 equal parts: 80 ÷ 10 each','shade 7 parts','7 × (80 ÷ 10) = ?'];
+  return h+pen(notes[s],s>=2?'rose':'','write',.5);
+ }},
+
+{q:`${BOX} − 3 = 5 × 6`,ans:33,special:{27:"That's 30 − 3. But the box is the starting number: something take away 3 leaves 30. Try adding instead."},
+ hint:"Not quite. The mystery number is the whole bar, so add the parts: 30 + 3.",
+ say:["Both sides of = must be worth the same. Work out the side you can: 5 × 6.",
+      `5 × 6 = 30. So now it's ${BOX} − 3 = 30.`,
+      "Start with the mystery number, take away 3, and 30 is left. So the mystery number is the whole bar, made of 30 and 3.",
+      "Your turn! To find the whole, add the parts: 30 + 3."],
+ draw(s){
+  let h=`<div class="row"><span class="nc expr">${BOX} − 3</span><span class="op">=</span>${s>=1?`<span class="nc expr ${s===1?'pop':''}" ${D(.3)}>30</span>`:'<span class="nc expr">5 × 6</span>'}</div>`;
+  if(s>=2) h+=bar(s,2,MQ,[{t:'30 left',f:80},{t:'3',f:20,c:'hatch'}],2);
+  const notes=['work out 5 × 6 first','? − 3 = 30','start with ?, take 3 away, 30 left','30 + 3 = ?'];
+  return h+pen(notes[s],s>=3?'rose':'','write',.5);
+ }},
+
+{q:`65.4 ÷ 100 = ${BOX}`,ans:0.654,special:{6.54:"That's ÷ 10. Dividing by 100 moves the digits two places.",654:"That's bigger! Dividing makes the number smaller."},
+ hint:"Not quite. Move every digit of 65.4 two places to the right, and put a 0 in the ones.",
+ say:["Dividing by 100 makes a number 100 times smaller: every digit moves <b>two places to the right</b>. Let's watch with 38.2 first.",
+      "Here's 38.2 in a place value grid.",
+      "÷ 100: every digit slides two places to the right.",
+      "The ones column is empty now, so put a 0 there as a placeholder. 38.2 ÷ 100 = 0.382.",
+      "Your turn! Do the same with 65.4 ÷ 100."],
+ draw(s){
+  let h=s===0?pen('÷ 100: every digit moves 2 places right','','write',.2):'';
+  if(s>=1) h+=pvGrid(s,{cols:['T','O','.','t','h','th'],from:{0:'3',1:'8',3:'2'},shift:2,k0:1,kShift:2,zeros:[{i:1,k:3}]});
+  if(s===3) h+=pen('38.2 ÷ 100 = 0.382','rose','write',.6);
+  if(s>=4) h+=pen('Your turn: 65.4 ÷ 100 = ?','rose','fade');
+  return h;
+ }},
+
+{q:`2303 × 6 = ${BOX}`,ans:13818,
+ hint:"Not quite. Check each column, and remember to add the carries.",
+ say:["Short multiplication. Multiply each digit by 6, starting with the ones.",
+      "Ones: 3 × 6 = 18. Write the 8 and carry the 1 into the tens.",
+      "Tens: 0 × 6 = 0. But don't forget the 1 you carried!",
+      "Your turn! Finish the tens, then the hundreds (3 × 6) and the thousands (2 × 6), adding any carries. What's the answer?"],
+ draw(s){
+  let h=colm(6,[
+    CR('','','','',carry(s,1,'1',0.9,'2.1rem','7.2rem',s===2),''),
+    R('','','2','3',hc('0',s===2),hc('3',s===1)),
+    R('×','','','','',hc('6',true)),
+    '-',
+    R('',QB,QB,QB,QB,wd(s,1,'8',.2))
+  ],'tight');
+  const notes=['','3 × 6 = 18: write 8, carry 1','0 × 6 + the carried 1','3 × 6 = ?   2 × 6 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose',s<3?'write':'',.5);
+  return h;
+ }},
+
+{q:`3604 ÷ 4 = ${BOX}`,ans:901,special:{91:"Careful, you've skipped the zero! When 4 doesn't go into 0, write a 0 on top."},
+ hint:"Not quite. Work out 36 ÷ 4 and 4 ÷ 4, and keep the 0 in the middle.",
+ say:["Bus stop method. 4 waits outside, and 3604 goes inside.",
+      "How many 4s go into 3? None. Carry the 3 over to make 36.",
+      "How many 4s go into 36? That goes on top of the 6.",
+      "How many 4s go into 0? None, so write a <b>0</b> on top. Don't skip it!",
+      "Your turn! Then how many 4s go into 4? Put it all together for the answer."],
+ draw(s){
+  let h=bus(s,{dv:'4',ds:['3','6','0','4'],k0:0,top:[null,{q:2},{w:3,t:'0'},{q:4}],carries:[{i:1,t:'3',k:1}],hl:s=>[-1,0,1,2,3][s]});
+  const notes=['',"4 into 3? Doesn't go. Carry 3.",'36 ÷ 4 = ?','0 ÷ 4 = 0: write 0','4 ÷ 4 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose','write',.6);
+  return h;
+ }},
+
+{q:`5.47 + 32.9 = ${BOX}`,ans:38.37,special:{8.76:"Careful: line up the decimal points, not the last digits."},
+ hint:"Not quite. Check the tenths: 4 + 9 is more than 10, so carry 1 into the ones.",
+ say:["Adding decimals: the most important thing is to <b>line up the decimal points</b>.",
+      "Write the numbers in columns with the points in a straight line: ones under ones, tenths under tenths.",
+      "32.9 has no hundredths, so fill the gap with a 0. 32.9 is the same as 32.90.",
+      "Start on the right. Hundredths: 7 + 0 = 7.",
+      "Your turn! Keep going left: tenths, ones, then tens. Put the decimal point in the answer, lined up with the others."],
+ draw(s){
+  if(s===0) return pen('5.47 + 32.9')+pen('line up the decimal points!','rose','write',.5);
+  const P={t:'.',c:'ptc'+(s===1?' on':'')};
+  const zt=s>=2?`<span class="rose ${s===2?'pop':''}" ${D(.3)}>0</span>`:'';
+  const ap=s>=4?{t:`<span class="rose ${s===4?'pop':''}" ${D(.3)}>.</span>`}:'';
+  let h=`<div class="${s===1?'fade':''}">`+colm(['c','c','c','.','c','c'],[
+    R('','','5',P,'4',hc('7',s===3)),
+    R('+','3','2',P,'9',{t:zt,c:s===3?'on':''}),
+    '-',
+    R('',QB,QB,ap,QB,wd(s,3,'7',.2))
+  ])+'</div>';
+  const notes=['','points in a straight line','32.9 = 32.90','7 + 0 = 7','keep going left'];
+  return h+pen(notes[s],'rose',s<4?'write':'',.5);
+ }},
+
+{q:`891 × 36 = ${BOX}`,ans:32076,
+ hint:"Not quite. Check both rows (891 × 6 and 891 × 30), then add them carefully.",
+ say:["Long multiplication! 891 × 36 is 891 × 6, plus 891 × 30. We'll make two rows, then add them.",
+      "Row 1 is 891 × 6. Ones: 1 × 6 = 6.",
+      "Tens: 9 × 6 = 54. Write the 4 and carry the 5.",
+      "Row 2 is 891 × 30. We're multiplying by 3 <b>tens</b>, so first put a <b>0</b> in the ones column as a placeholder.",
+      "Now multiply by 3: 1 × 3 = 3, which goes in the tens.",
+      "Your turn! Finish both rows, adding carries as you go, then add the two rows together."],
+ draw(s){
+  let h=colm(6,[
+    CR('','','',carry(s,2,'5',0.9,'2.1rem','7.2rem',false),'',''),
+    R('','','',hc('8',false),hc('9',s===2),hc('1',s===1||s===4)),
+    R('×','','','',hc('3',s===3||s===4),hc('6',s===1||s===2)),
+    '-',
+    R(rl('×6'),'',QB,QB,wd(s,2,'4',.2),wd(s,1,'6',.2)),
+    R(rl('×30'),QB,QB,QB,wd(s,4,'3',.2),wd(s,3,'0',.2)),
+    '-',
+    R('',QB,QB,QB,QB,QB)
+  ],'tight');
+  const notes=['891 × 6, then 891 × 30','1 × 6 = 6','9 × 6 = 54: write 4, carry 5','0 placeholder','1 × 3 = 3','finish both rows, then add'];
+  return h+pen(notes[s],s>=1?'rose':'','write',.5);
+ }},
+
+{q:`${BOX} = 32.98 − 2.9`,ans:30.08,special:{32.69:"Careful: line up the decimal points, not the last digits.",30.8:"So close! Don't drop the 0 in the tenths. It's holding the place."},
+ hint:"Not quite. Line up the points, make 2.9 into 2.90, and subtract column by column.",
+ say:["The box is on the left, so just work out 32.98 − 2.9. First, <b>line up the decimal points</b>.",
+      "Write the numbers in columns with the points in a straight line.",
+      "2.9 has no hundredths, so fill the gap with a 0: 2.90.",
+      "Start on the right. Hundredths: 8 − 0 = 8.",
+      "Your turn! Now the tenths (9 − 9), the ones, then the tens. Don't forget the decimal point, and keep any zeros!"],
+ draw(s){
+  if(s===0) return pen(`${BOX} = 32.98 − 2.9`)+pen('line up the decimal points!','rose','write',.5);
+  const P={t:'.',c:'ptc'+(s===1?' on':'')};
+  const zt=s>=2?`<span class="rose ${s===2?'pop':''}" ${D(.3)}>0</span>`:'';
+  const ap=s>=4?{t:`<span class="rose ${s===4?'pop':''}" ${D(.3)}>.</span>`}:'';
+  let h=`<div class="${s===1?'fade':''}">`+colm(['c','c','c','.','c','c'],[
+    R('','3','2',P,'9',hc('8',s===3)),
+    R('−','','2',P,'9',{t:zt,c:s===3?'on':''}),
+    '-',
+    R('',QB,QB,ap,QB,wd(s,3,'8',.2))
+  ])+'</div>';
+  const notes=['','points in a straight line','2.9 = 2.90','8 − 0 = 8','9 − 9, then the ones and tens'];
+  return h+pen(notes[s],'rose',s<4?'write':'',.5);
+ }},
+
+{q:`18${NB}238 − ${BOX} = 5183`,ans:13055,special:{23421:"That's 18 238 + 5183. The box is a part, not the whole, so subtract instead."},
+ hint:"Not quite. Work out 18 238 − 5183 carefully, then check by adding your answer to 5183.",
+ say:["Start with 18 238, take something away, and 5183 is left. The missing number is one of the <b>parts</b>.",
+      "As a bar: the whole is 18 238. The parts are the mystery number and 5183.",
+      "To find a missing part: the whole take away the part you know. So 18 238 − 5183.",
+      "Column subtraction. Ones: 8 − 3 = 5.",
+      "Tens: 3 − 8? Not enough tens, so exchange 1 hundred for 10 tens. The 2 hundreds become 1, and the 3 tens become 13.",
+      "Your turn! Finish the tens (13 − 8), then the hundreds, thousands and ten thousands. Check: your answer + 5183 should make 18 238."],
+ draw(s){
+  if(s<3){
+    let h=pen(`18${NB}238 − ${BOX} = 5183`);
+    if(s>=1) h+=bar(s,1,`18${NB}238`,[{t:MQ,f:13},{t:'5183',f:5}],1);
+    if(s>=2) h+=pen(`18${NB}238 − 5183`,'rose','write',.3);
+    return h;
+  }
+  const ex=s>=4,a=s===4;
+  let h=colm(6,[
+    CR('','','',ex?{t:`<span class="${a?'write':''}" ${a?D(.4):''}>1</span>`}:'','',''),
+    R('','1','8',{t:'2',c:ex?'strike '+(a?'anim':''):''},{t:(ex?`<span class="sup ${a?'hop':''}" style="--d:.9s;--hx:-2.1rem;--hy:0rem">1</span>`:'')+'3',c:a?'on':''},hc('8',s===3)),
+    R('−','','5','1',hc('8',a),hc('3',s===3)),
+    '-',
+    R('',QB,QB,QB,QB,wd(s,3,'5',.2))
+  ],'tight');
+  const notes=['','','','8 − 3 = 5','exchange: 2 hundreds → 1, 3 tens → 13','13 − 8, then keep going left'];
+  return h+pen(notes[s],'rose',s<5?'write':'',a?1.3:.3);
+ }},
+
+{q:`4332 = ${BOX} × 3`,ans:1444,
+ hint:"Not quite. Carry on with the bus stop: 13 ÷ 3, then the next digits, carrying remainders.",
+ say:["Something × 3 makes 4332. Do the opposite of multiplying: <b>divide</b>. So work out 4332 ÷ 3.",
+      "Bus stop method. 3 waits outside, and 4332 goes inside.",
+      "How many 3s go into 4? One, with 1 left over. Write 1 on top and carry the 1 to make 13.",
+      "Your turn! How many 3s go into 13? Keep going along, carrying any remainders. What's the answer?"],
+ draw(s){
+  if(s===0) return pen(`4332 = ${BOX} × 3`)+pen('so ? = 4332 ÷ 3','rose','write',.5);
+  let h=bus(s,{dv:'3',ds:['4','3','3','2'],k0:1,top:[{w:2,t:'1'},{q:3},{q:3},{q:3}],carries:[{i:1,t:'1',k:2,d:1}],hl:s=>s===2?0:s===3?1:-1});
+  const notes=['','4332 ÷ 3','4 ÷ 3 = 1 r 1: write 1, carry 1','13 ÷ 3 = ?   …keep going'];
+  return h+pen(notes[s],'rose','write',.5);
+ }},
+
+{q:`63${NB}782 ÷ ${BOX} = 2`,ans:31891,special:{127564:"That's 63 782 × 2. If dividing by the mystery number gives 2, the mystery number is half of 63 782."},
+ hint:"Not quite. The mystery number is half of 63 782. Carry on with the bus stop.",
+ say:["63 782 ÷ something = 2. That means the mystery number fits into 63 782 exactly <b>2 times</b>.",
+      "As a bar: 63 782 is made of 2 equal parts. Each part is the mystery number.",
+      "So the mystery number is half of 63 782. Work out 63 782 ÷ 2.",
+      "Bus stop: how many 2s go into 6? Three. Write 3 on top.",
+      "How many 2s go into 3? One, with 1 left over. Write 1 on top and carry the 1 to make 17.",
+      "Your turn! How many 2s go into 17? Keep going along the digits. What's the answer?"],
+ draw(s){
+  if(s<3){
+    let h=pen(`63${NB}782 ÷ ${BOX} = 2`);
+    if(s>=1) h+=bar(s,1,`63${NB}782`,[{t:MQ,f:1},{t:MQ,f:1}],1);
+    if(s>=2) h+=pen(`? = 63${NB}782 ÷ 2`,'rose','write',.3);
+    return h;
+  }
+  let h=bus(s,{dv:'2',ds:['6','3','7','8','2'],k0:3,top:[{w:3,t:'3'},{w:4,t:'1'},{q:5},{q:5},{q:5}],carries:[{i:2,t:'1',k:4,d:1}],hl:s=>s===3?0:s===4?1:s===5?2:-1});
+  const notes=['','','','6 ÷ 2 = 3','3 ÷ 2 = 1 r 1: carry 1','17 ÷ 2 = ?   …keep going'];
+  return h+pen(notes[s],'rose','write',.5);
+ }},
+
+{q:`322${NB}684 + 979 + 88${NB}002 = ${BOX}`,ans:411665,
+ hint:"Not quite. Check each column again, and add the carried numbers.",
+ say:["Adding three numbers in columns. Line them up from the <b>right</b>: ones under ones, tens under tens.",
+      "Ones column first: 4 + 9 + 2 = 15. Write the 5 and carry the 1 into the tens.",
+      "Tens: 8 + 7 + 0, plus the 1 you carried.",
+      "Your turn! Keep going left, column by column, adding any carries. What's the total?"],
+ draw(s){
+  let h=colm(7,[
+    CR('','','','','',carry(s,1,'1',0.9,'2.1rem','9.5rem',s===2),''),
+    R('','3','2','2','6',hc('8',s===2),hc('4',s===1)),
+    R('+','','','','9',hc('7',s===2),hc('9',s===1)),
+    R('+','','8','8','0',hc('0',s===2),hc('2',s===1)),
+    '-',
+    R('',QB,QB,QB,QB,QB,wd(s,1,'5',.2))
+  ],'tight');
+  const notes=['line up from the right','4 + 9 + 2 = 15: write 5, carry 1','8 + 7 + 0 + 1 = ?','keep going left'];
+  return h+pen(notes[s],s>=1?'rose':'',s<3?'write':'',.5);
+ }},
+
+{q:`883 × 74 = ${BOX}`,ans:65342,
+ hint:"Not quite. Check both rows (883 × 4 and 883 × 70), then add them carefully.",
+ say:["Long multiplication! 883 × 74 is 883 × 4, plus 883 × 70. Two rows, then add them.",
+      "Row 1 is 883 × 4. Ones: 3 × 4 = 12. Write the 2 and carry the 1.",
+      "Row 2 is 883 × 70. We're multiplying by 7 <b>tens</b>, so put a <b>0</b> placeholder in the ones first.",
+      "Now multiply by 7. 3 × 7 = 21: write the 1 in the tens and carry the 2.",
+      "Your turn! Finish both rows, adding carries as you go, then add the two rows together."],
+ draw(s){
+  const r2h=s>=3?{t:QB.t+`<span class="sub ${s===3?'hop':''}" style="--d:.9s;--hx:2.1rem;--hy:0rem">2</span>`}:QB;
+  let h=colm(6,[
+    CR('','','','',carry(s,1,'1',0.9,'2.1rem','7.2rem',false),''),
+    R('','','',hc('8',false),hc('8',false),hc('3',s===1||s===3)),
+    R('×','','','',hc('7',s===2||s===3),hc('4',s===1)),
+    '-',
+    R(rl('×4'),'',QB,QB,QB,wd(s,1,'2',.2)),
+    R(rl('×70'),QB,QB,r2h,wd(s,3,'1',.2),wd(s,2,'0',.2)),
+    '-',
+    R('',QB,QB,QB,QB,QB)
+  ],'tight');
+  const notes=['883 × 4, then 883 × 70','3 × 4 = 12: write 2, carry 1','0 placeholder','3 × 7 = 21: write 1, carry 2','finish both rows, then add'];
+  return h+pen(notes[s],s>=1?'rose':'','write',.5);
+ }}
+];
+
+
+return Q;
+})();
+
+const SPELL4={focus:'inter',words:[
+  {w:'interact',m:'to talk to, play with or work with other people or things.',s:'At the farm, we could ______ with the baby goats.'},
+  {w:'intercity',m:'going between cities.',s:'We took the fast ______ train to visit Grandma in another city.'},
+  {w:'international',m:'between or involving different countries.',s:'England played France in an ______ football match.'},
+  {w:'interfere',m:'to get involved in something when you should not, or to get in the way.',s:'Please don\'t ______ with your brother\'s game.'},
+  {w:'interview',m:'a meeting where one person asks another person questions.',s:'The reporter did an ______ with the famous author.'},
+  {w:'intercept',m:'to stop or catch something on its way to somewhere else.',s:'The defender jumped up to ______ the pass.'},
+  {w:'intercom',m:'a speaker system for talking to people in another room.',s:'The head teacher spoke to every class over the ______.'},
+  {w:'internet',m:'the huge network that joins up computers all around the world.',s:'We used the ______ to find facts about volcanoes.'},
+  {w:'interchange',m:'a place where roads, buses or trains meet, so you can swap from one to another.',s:'We changed buses at the busy ______ in town.'},
+  {w:'interface',m:'the screen, buttons and menus you use to control a computer or machine.',s:'The new game has a simple ______ that is easy to use.'}
+]};
+const SPELL6={focus:'tial',words:[
+  {w:'influential',m:'having a big effect on what people think or do.',s:'The ______ scientist changed the way people thought about space.'},
+  {w:'martial',m:'to do with fighting or war.',s:'Karate and judo are both ______ arts.'},
+  {w:'spatial',m:'to do with space, and where things are compared to each other.',s:'Building models helps you develop good ______ skills.'},
+  {w:'partial',m:'only part of something, not the whole thing.',s:'During the ______ eclipse, the moon covered just a slice of the sun.'},
+  {w:'confidential',m:'secret, and meant to be kept private.',s:'The letter was marked ______, so only the head teacher could open it.'},
+  {w:'essential',m:'absolutely necessary; you cannot do without it.',s:'Water is ______ for every living thing.'},
+  {w:'substantial',m:'large in size, amount or importance.',s:'We ate a ______ breakfast before the long walk.'},
+  {w:'potential',m:'the ability to develop into something in the future.',s:'Her coach says she has the ______ to become a champion.'},
+  {w:'sequential',m:'following one after another in a set order.',s:'The pages are numbered in ______ order.'},
+  {w:'torrential',m:'pouring down fast and heavily, used about rain.',s:'______ rain flooded the playground.'}
+]};
+const TOPICS4=[
+  ['Adding and taking away in your head',[1,4,7]],
+  ['Times tables',[2,3,5,8,12,13,14,18]],
+  ['Fractions',[6,9]],
+  ['Missing numbers',[2,4,7,14,15,19,20]],
+  ['Column adding and taking away',[10,11]],
+  ['Short multiplication and division',[16,17,19,20]]
+];
+const TOPICS6=[
+  ['Times tables and mental maths',[1,6,10,17]],
+  ['Squares and cubes',[2,5,12]],
+  ['× and ÷ by 10, 100 and 1000',[4,7,8,18]],
+  ['Decimals',[3,8,18,21,23]],
+  ['Fractions',[9,13,15,16]],
+  ['Missing numbers',[3,5,6,7,10,12,17,24,25,26]],
+  ['Column adding and taking away',[14,21,23,24,27]],
+  ['Multiplying (short and long)',[19,22,28]],
+  ['Short division',[11,20,25,26]]
+];
+
+/* ---------- app ---------- */
+const YEARS={
+  y4:{label:'Year 4',app:'y4',frac:'stack',speech:true,Q:Q4,SPELL:SPELL4,TOPICS:TOPICS4,
+      spTitle:'Stage 4 · List 5',spRule:'Words that start with <b>‘inter’</b>, which means <i>between</i> or <i>among</i>, like <mark class="fx">inter</mark>national.'},
+  y6:{label:'Year 6',app:'y6',frac:'text',speech:false,Q:Q6,SPELL:SPELL6,TOPICS:TOPICS6,
+      spTitle:'Stage 6 · List 5',spRule:'Words with <b>‘tial’</b>, which says /shul/, like essen<mark class="fx">tial</mark>.'}
+};
+let YEAR=null,APP='y6',FRAC='text',SPEECH=false,Q=Q6,SPELL=SPELL6,TOPICS=TOPICS6;
+/* carry over progress saved by the two separate helpers (same website, older storage names) */
+(function(){
+  function move(oldP,newP){Object.keys(localStorage).forEach(k=>{if(k.indexOf(oldP)===0){const nk=newP+k.slice(oldP.length);if(localStorage.getItem(nk)===null)localStorage.setItem(nk,localStorage.getItem(k));localStorage.removeItem(k);}});}
+  try{move('wio2-','y4-');move(String.fromCharCode(110,101,108,108)+'2-','y6-');}catch(e){}
+})();
+const $=id=>document.getElementById(id);
+const home=$('home'),lesson=$('lesson'),tiles=$('tiles'),stage=$('stage'),sayEl=$('say'),dots=$('dots'),
+      prevB=$('prev'),nextB=$('next'),fb=$('fb'),inputs=$('inputs'),how=$('how'),locked=$('locked'),
+      showHow=$('showHow'),again=$('again');
+const PRAISE=["Yes! That's right.","Brilliant, you got it!","Spot on! Well done.","Nailed it! Great thinking."];
+let cur=0,step=0;
+
+/* ---- progress (kept on this device) ---- */
+let SKEY='y6-state',ST={};
+function loadST(){SKEY=APP+'-state';try{ST=JSON.parse(localStorage.getItem(SKEY)||'{}')||{};}catch(e){ST={};}}
+function saveST(){try{localStorage.setItem(SKEY,JSON.stringify(ST));}catch(e){}}
+function st(i){if(!ST[i])ST[i]={t:0,s:0,h:0,u:0,a:[]};if(!ST[i].a)ST[i].a=[];return ST[i];}
+
+/* ---- home ---- */
+function renderHome(){
+  tiles.innerHTML=Q.map((q,i)=>{
+    const S=ST[i];
+    const mark=S&&S.s?(S.h?'<span class="star help" aria-label="solved with help">☆</span>':'<span class="star" aria-label="solved on your own">★</span>'):'';
+    return `<button class="tile" data-i="${i}"><span class="n">${i+1}</span><span class="tq">${q.q}</span>${mark}</button>`;
+  }).join('');
+}
+tiles.addEventListener('click',e=>{const b=e.target.closest('.tile');if(b)openQ(+b.dataset.i);});
+let resetArmed=false;
+$('reset').addEventListener('click',()=>{
+  const b=$('reset');
+  if(!resetArmed){resetArmed=true;b.textContent='Tap again to clear all answers and working out';setTimeout(()=>{resetArmed=false;b.textContent='Start everything again';},4000);return;}
+  ST={};saveST();
+  try{Object.keys(localStorage).filter(k=>k.indexOf(APP+'-w-')===0).forEach(k=>localStorage.removeItem(k));}catch(e){}
+  resetArmed=false;b.textContent='Start everything again';renderHome();
+});
+
+/* ---- question view ---- */
+function openQ(i){
+  stopSpeak();
+  cur=i;step=0;
+  home.hidden=true;lesson.hidden=false;$('results').hidden=true;
+  $('qnum').textContent=`Question ${i+1} of ${Q.length}`;
+  $('qbig').innerHTML=Q[i].q;
+  $('pq').disabled=i===0;$('nq').disabled=false;$('nq').textContent=i===Q.length-1?'See my results ›':'Next question ›';
+  how.hidden=true;how.dataset.open='0';
+  buildAnswer();renderTries();updateHelp();
+  loadWork();
+  window.scrollTo(0,0);
+  requestAnimationFrame(sizePad);
+}
+function goHome(){stopSpeak();lesson.hidden=true;$('results').hidden=true;home.hidden=false;renderHome();window.scrollTo(0,0);}
+
+function renderTries(){
+  const S=st(cur);let h='';
+  if(S.s) h=`<span class="tag ok">${S.h?'Solved with help':'Solved on your own'}</span>`;
+  else if(S.u) h='<span class="tag">Help unlocked</span>';
+  else{const left=3-S.t;h='<span>Tries left</span>'+[0,1,2].map(k=>`<i class="${k<left?'on':''}"></i>`).join('');}
+  $('tries').innerHTML=h;
+}
+function updateHelp(){
+  const S=st(cur);
+  const open=!!(S.u||(S.s&&how.dataset.open==='1'));
+  locked.hidden=!!(S.u||S.s);
+  showHow.hidden=!(S.s&&!open);
+  if(open&&how.hidden){how.hidden=false;step=0;draw();}
+  if(!open) how.hidden=true;
+}
+showHow.addEventListener('click',()=>{how.dataset.open='1';updateHelp();setTimeout(()=>{try{how.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},80);});
+
+function draw(){
+  const q=Q[cur],last=q.say.length-1;
+  stage.innerHTML=q.draw(step);
+  sayEl.innerHTML=q.say[step];
+  dots.innerHTML=q.say.map((_,k)=>`<i class="${k<=step?'on':''}"></i>`).join('');
+  prevB.disabled=step===0;
+  nextB.disabled=step===last;
+  again.hidden=!(step===last&&!st(cur).s);
+  stopSpeak();
+}
+again.addEventListener('click',()=>{
+  try{$('answerCard').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}
+  setTimeout(()=>{const x=$('a1');if(x)try{x.focus({preventScroll:true});}catch(e){}},450);
+});
+
+/* ---- answering ---- */
+function buildAnswer(){
+  const q=Q[cur];
+  fb.textContent='';fb.className='fb';$('stars').innerHTML='';
+  if(q.frac&&FRAC==='stack')
+    inputs.innerHTML='<span class="fin"><input class="ans" id="a1" inputmode="numeric" autocomplete="off" aria-label="Top number"><hr><input class="ans" id="a2" inputmode="numeric" autocomplete="off" aria-label="Bottom number"></span>';
+  else if(q.frac)
+    inputs.innerHTML='<input class="ans" id="a1" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="e.g. 1 3/4" aria-label="Your answer">';
+  else
+    inputs.innerHTML='<input class="ans" id="a1" type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer">';
+  $('fhelp').hidden=!(q.frac&&FRAC==='text');
+  inputs.querySelectorAll('input').forEach(x=>x.addEventListener('keydown',e=>{if(e.key==='Enter')check();}));
+  $('toResults').hidden=true;
+  const S=st(cur);
+  if(S.s){offerResults();}
+  if(S.s) setFb(S.h?'You solved this one with help. Nice work!':'You solved this one on your own. Brilliant!','ok');
+}
+function setFb(t,c){fb.textContent=t;fb.className='fb '+c;}
+function parseNum(v){const t=String(v).replace(/[\s,\u00A0]/g,'');if(!/^-?\d*\.?\d+$/.test(t))return NaN;return parseFloat(t);}
+function parseFrac(v){
+  const t=String(v).trim().replace(/\s+/g,' ');let m;
+  if((m=t.match(/^(\d+) (\d+) ?\/ ?(\d+)$/))) return {n:+m[1]*+m[3]+ +m[2],d:+m[3],fn:+m[2],fd:+m[3]};
+  if((m=t.match(/^(\d+) ?\/ ?(\d+)$/))) return {n:+m[1],d:+m[2],fn:+m[1],fd:+m[2]};
+  if(/^\d+$/.test(t)) return {n:+t,d:1,fn:0,fd:1};
+  return null;
+}
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+function judge(q){
+  if(q.frac){
+    let f;
+    if(FRAC==='stack'){
+      const a=($('a1').value||'').trim(),b=($('a2').value||'').trim();
+      if(!a||!b) return {empty:'Fill in the top and the bottom numbers first.'};
+      const n=parseInt(a,10),d=parseInt(b,10);
+      if(isNaN(n)||isNaN(d)||d===0) return {empty:'Use whole numbers for the top and the bottom.'};
+      f={n,d,fn:n,fd:d};
+    } else {
+      const v=($('a1').value||'').trim();
+      if(!v) return {empty:'Type your answer in the box first.'};
+      f=parseFrac(v);
+      if(!f||f.d===0) return {empty:'Type it as a fraction like 7/4, or a mixed number like 1 3/4.'};
+    }
+    if(f.n*q.ans[1]===q.ans[0]*f.d)
+      return {ok:true,msg:(f.fn>0&&gcd(f.fn,f.fd)>1)?"That's right! Bonus challenge: can you simplify it? The top and bottom share a factor.":null};
+    const g=gcd(f.n,f.d)||1;
+    return {ok:false,key:(f.n/g)+'/'+(f.d/g)};
+  }
+  const v=($('a1').value||'').trim();
+  if(!v) return {empty:'Type your answer in the box first.'};
+  const n=parseNum(v);
+  if(isNaN(n)) return {empty:'Type a number, like 12 or 3.5.'};
+  if(Math.abs(n-q.ans)<1e-9) return {ok:true};
+  return {ok:false,key:String(n),special:q.special&&q.special[String(n)]};
+}
+function win(msg){
+  setFb(msg||PRAISE[Math.floor(Math.random()*PRAISE.length)],'ok');
+  $('stars').innerHTML='<span class="bigstar pop" aria-hidden="true">★</span>';
+}
+function check(){
+  const q=Q[cur],S=st(cur),r=judge(q);
+  if(r.empty){setFb(r.empty,'');return;}
+  if(r.ok){
+    const fresh=!S.s,before=allSolved();
+    if(!S.s){S.s=1;S.h=S.u?1:0;saveST();}
+    win(r.msg);renderTries();updateHelp();again.hidden=true;offerResults();
+    if(fresh&&((!before&&allSolved())||cur===Q.length-1)){const q0=cur;setTimeout(()=>{if(cur===q0&&!lesson.hidden)showResults();},1800);}
+    return;
+  }
+  // after help is unlocked (or already solved): give the targeted hint
+  if(S.s||S.u){setFb(r.special||q.hint,'no');return;}
+  if(S.a.indexOf(r.key)>=0){setFb("You've already tried that answer. Have another look at your working out.",'no');return;}
+  S.a.push(r.key);S.t++;
+  if(S.t>=3){
+    S.u=1;saveST();renderTries();
+    setFb("That's 3 tries. Let's work through it together below, then have another go.",'no');
+    updateHelp();
+    setTimeout(()=>{try{how.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},600);
+    return;
+  }
+  saveST();renderTries();
+  const left=3-S.t;
+  setFb(`Not quite. Have another look at your working out. ${left} ${left===1?'try':'tries'} left.`,'no');
+}
+
+/* ---- working-out pad (squared paper) ---- */
+const pad=$('pad'),wrap=$('padwrap');
+const ctx=pad.getContext?pad.getContext('2d'):null;
+let strokes=[],stash=null,curS=null,tool='pen',W=0,Hp=0;
+function ink(){try{return getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()||'#1F2D48';}catch(e){return '#1F2D48';}}
+function wkey(){return APP+'-w-'+cur;}
+function loadWork(){try{strokes=JSON.parse(localStorage.getItem(wkey())||'[]')||[];}catch(e){strokes=[];}stash=null;}
+function saveWork(){try{localStorage.setItem(wkey(),JSON.stringify(strokes));}catch(e){}}
+function sizePad(){
+  if(!ctx||lesson.hidden) return;
+  const dpr=window.devicePixelRatio||1;
+  W=wrap.clientWidth;Hp=wrap.clientHeight;
+  if(!W||!Hp) return;
+  pad.width=Math.round(W*dpr);pad.height=Math.round(Hp*dpr);
+  pad.style.width=W+'px';pad.style.height=Hp+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  redraw();
+}
+function penStyle(s){
+  ctx.globalCompositeOperation=s.e?'destination-out':'source-over';
+  const c=ink();ctx.strokeStyle=c;ctx.fillStyle=c;
+  ctx.lineWidth=s.e?22:2.8;ctx.lineCap='round';ctx.lineJoin='round';
+}
+function dot(s,p){ctx.save();penStyle(s);ctx.beginPath();ctx.arc(p[0]*W,p[1]*W,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();ctx.restore();}
+function seg(s,a,b){ctx.save();penStyle(s);ctx.beginPath();ctx.moveTo(a[0]*W,a[1]*W);ctx.lineTo(b[0]*W,b[1]*W);ctx.stroke();ctx.restore();}
+function redraw(){
+  if(!ctx) return;
+  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,pad.width,pad.height);ctx.restore();
+  for(const s of strokes){
+    if(s.p.length===1){dot(s,s.p[0]);continue;}
+    ctx.save();penStyle(s);ctx.beginPath();ctx.moveTo(s.p[0][0]*W,s.p[0][1]*W);
+    for(let k=1;k<s.p.length;k++) ctx.lineTo(s.p[k][0]*W,s.p[k][1]*W);
+    ctx.stroke();ctx.restore();
+  }
+}
+function pos(e){const r=pad.getBoundingClientRect();return [+((e.clientX-r.left)/W).toFixed(4),+((e.clientY-r.top)/W).toFixed(4)];}
+if(ctx){
+  pad.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse'&&e.button!==0) return;
+    try{pad.setPointerCapture(e.pointerId);}catch(err){}
+    const p=pos(e);curS={e:tool==='rub'?1:0,p:[p]};strokes.push(curS);stash=null;dot(curS,p);
+    e.preventDefault();
+  });
+  pad.addEventListener('pointermove',e=>{
+    if(!curS) return;
+    let evs=e.getCoalescedEvents?e.getCoalescedEvents():[];if(!evs||!evs.length) evs=[e];
+    for(const ev of evs){
+      const p=pos(ev),l=curS.p[curS.p.length-1];
+      if(Math.hypot((p[0]-l[0])*W,(p[1]-l[1])*W)<1) continue;
+      curS.p.push(p);seg(curS,l,p);
+    }
+    e.preventDefault();
+  });
+  const end=()=>{if(curS){curS=null;saveWork();}};
+  pad.addEventListener('pointerup',end);pad.addEventListener('pointercancel',end);
+}
+function setTool(t){tool=t;$('tPen').setAttribute('aria-pressed',t==='pen');$('tRub').setAttribute('aria-pressed',t==='rub');}
+$('tPen').addEventListener('click',()=>setTool('pen'));
+$('tRub').addEventListener('click',()=>setTool('rub'));
+$('tUndo').addEventListener('click',()=>{if(strokes.length)strokes.pop();else if(stash){strokes=stash;stash=null;}redraw();saveWork();});
+$('tClear').addEventListener('click',()=>{if(!strokes.length)return;stash=strokes;strokes=[];redraw();saveWork();});
+$('tMore').addEventListener('click',()=>{const t=wrap.classList.toggle('tall');$('tMore').textContent=t?'Less space':'More space';requestAnimationFrame(sizePad);});
+let rz=0;window.addEventListener('resize',()=>{cancelAnimationFrame(rz);rz=requestAnimationFrame(sizePad);});
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',redraw);}catch(e){}
+
+/* ---- read aloud ---- */
+const hasSpeech=('speechSynthesis' in window);
+function canSpeak(){return SPEECH&&hasSpeech;}
+function stopSpeak(){try{if(hasSpeech)speechSynthesis.cancel();}catch(e){}}
+function speak(){
+  if(!canSpeak()) return;
+  try{
+    stopSpeak();
+    const t=sayEl.textContent.replace(/×/g,' times ').replace(/÷/g,' divided by ').replace(/−/g,' take away ').replace(/\+/g,' add ').replace(/=/g,' equals ');
+    const u=new SpeechSynthesisUtterance(t);u.lang='en-GB';u.rate=0.92;
+    const v=speechSynthesis.getVoices().find(v=>v.lang==='en-GB');if(v)u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+if($('speak')) $('speak').addEventListener('click',speak);
+
+/* ---- controls ---- */
+prevB.addEventListener('click',()=>{if(step>0){step--;draw();}});
+nextB.addEventListener('click',()=>{if(step<Q[cur].say.length-1){step++;draw();}});
+$('replay').addEventListener('click',draw);
+$('homeBtn').addEventListener('click',goHome);
+$('check').addEventListener('click',check);
+$('pq').addEventListener('click',()=>{if(cur>0)openQ(cur-1);});
+$('nq').addEventListener('click',()=>{if(cur<Q.length-1)openQ(cur+1);else showResults();});
+
+/* ---- results page ---- */
+function qStatus(i){const S=ST[i];return S&&S.s?(S.h?'help':'own'):'todo';}
+function tally(){const r={own:[],help:[],todo:[]};Q.forEach((q,i)=>r[qStatus(i)].push(i));return r;}
+function allSolved(){return Q.every((q,i)=>qStatus(i)!=='todo');}
+function offerResults(){$('toResults').hidden=!(allSolved()||cur===Q.length-1);}
+function showResults(){stopSpeak();home.hidden=true;lesson.hidden=true;$('results').hidden=false;renderResults();window.scrollTo(0,0);}
+function renderResults(){
+  const N=Q.length,t=tally(),own=t.own.length,help=t.help.length,todo=t.todo.length,solved=own+help;
+  $('resTitle').textContent=solved===N?'All done!':'Your results so far';
+  const C=2*Math.PI*50,a=own/N*C,b=help/N*C;
+  $('ringWrap').innerHTML=`<svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="50"/><circle class="ring-own" cx="60" cy="60" r="50" stroke-dasharray="${a.toFixed(2)} ${C.toFixed(2)}"/><circle class="ring-help" cx="60" cy="60" r="50" stroke-dasharray="${b.toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-a).toFixed(2)}"/></svg>`;
+  const el=$('scoreNum');
+  let reduce=false;try{reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+  if(reduce||!own) el.textContent=own;
+  else{let t0=null;const tick=ts=>{if(t0===null)t0=ts;const k=Math.min(1,(ts-t0)/900);el.textContent=Math.round(own*k);if(k<1)requestAnimationFrame(tick);};el.textContent='0';requestAnimationFrame(tick);}
+  $('scoreOf').innerHTML=`out of ${N}<br>on your own`;
+  let msg;
+  if(own===N) msg='Every single question on your own. Amazing work!';
+  else if(solved===N) msg=`All ${N} done! Try your ☆ ones again to turn them into gold stars.`;
+  else if(own>=N*0.75) msg='Brilliant work! Just a few left to go.';
+  else if(solved>=N/2) msg='Great progress. Keep going!';
+  else if(solved>0) msg='A good start. Every question you try makes you stronger.';
+  else msg="You haven't answered any questions yet. Pick one to start!";
+  $('resMsg').textContent=msg;
+  $('cOwn').textContent=own;$('cHelp').textContent=help;$('cTodo').textContent=todo;
+  $('qgrid').innerHTML=Q.map((q,i)=>{const s=qStatus(i);const lab=s==='own'?'solved on your own':s==='help'?'solved with help':'still to do';return `<button class="qc ${s} pop" style="--d:${(i*0.03).toFixed(2)}s" data-i="${i}" aria-label="Question ${i+1}, ${lab}">${i+1}<small>${s==='own'?'★':s==='help'?'☆':''}</small></button>`;}).join('');
+  const order={practise:0,unfinished:1,strong:2};
+  const rows=TOPICS.map(([name,qs])=>{const sts=qs.map(n=>qStatus(n-1));const kind=sts.includes('help')?'practise':sts.includes('todo')?'unfinished':'strong';return {name,qs,sts,kind};}).sort((x,y)=>order[x.kind]-order[y.kind]);
+  const tagText={practise:'Practise this',unfinished:'Not finished yet',strong:'Strong'};
+  $('topics').innerHTML=rows.map(r=>`<div class="topic"><div class="th"><span class="tn">${r.name}</span><span class="ttag ${r.kind}">${tagText[r.kind]}</span></div><div class="chips">${r.qs.map((n,k)=>`<button class="chip ${r.sts[k]}" data-i="${n-1}" aria-label="Question ${n}">${n}</button>`).join('')}</div></div>`).join('');
+  $('retryHelp').hidden=!help;
+  $('goTodo').hidden=!todo;
+  $('goTodo').textContent=todo===1?'Do the last one still to do':`Do the ${todo} still to do`;
+}
+$('qgrid').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b)openQ(+b.dataset.i);});
+$('topics').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b)openQ(+b.dataset.i);});
+$('retryHelp').addEventListener('click',()=>{const t=tally();t.help.forEach(i=>{ST[i]={t:0,s:0,h:0,u:0,a:[]};try{localStorage.removeItem(APP+'-w-'+i);}catch(e){}});saveST();if(t.help.length)openQ(t.help[0]);});
+$('goTodo').addEventListener('click',()=>{const t=tally();if(t.todo.length)openQ(t.todo[0]);});
+$('resBack').addEventListener('click',goHome);
+$('homeResults').addEventListener('click',showResults);
+$('toResults').addEventListener('click',showResults);
+
+/* ---- spellings ---- */
+let SPKEY='y6-spell',SPS={run:null,last:null};
+function loadSPS(){SPKEY=APP+'-spell';SPS={run:null,last:null};try{SPS=JSON.parse(localStorage.getItem(SPKEY)||'null')||{run:null,last:null};}catch(e){}}
+function spSave(){try{localStorage.setItem(SPKEY,JSON.stringify(SPS));}catch(e){}}
+const SPSECTIONS=['pick','home','lesson','results','spellTest','spellResults'];
+function spShow(id){SPSECTIONS.forEach(s=>{$(s).hidden=s!==id;});window.scrollTo(0,0);}
+const fx=w=>w.replace(SPELL.focus,`<mark class="fx">${SPELL.focus}</mark>`);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+/* tabs on the home screen */
+function setTab(t){
+  $('tabMaths').setAttribute('aria-selected',t==='maths');$('tabSpell').setAttribute('aria-selected',t==='spell');
+  $('mathsHome').hidden=t!=='maths';$('spellHome').hidden=t!=='spell';
+  try{localStorage.setItem(APP+'-tab',t);}catch(e){}
+  if(t==='spell') spHome();
+}
+$('tabMaths').addEventListener('click',()=>setTab('maths'));
+$('tabSpell').addEventListener('click',()=>setTab('spell'));
+function spHome(){
+  const C=YEARS[YEAR];if(C){$('spTitle').textContent=C.spTitle;$('spRule').innerHTML=C.spRule;}
+  const r=SPS.run;
+  $('spResume').hidden=!r;
+  if(r) $('spResume').textContent=`Carry on (word ${r.idx+1} of ${r.order.length})`;
+  $('spStart').textContent=r?'Start a new spelling test':'Start the spelling test';
+  $('spLastBtn').hidden=!SPS.last;
+}
+function spGoHome(){spStop();spShow('home');setTab('spell');}
+
+/* reading aloud */
+const SY=('speechSynthesis' in window)?window.speechSynthesis:null;
+let SV=null;
+function spPick(){try{const vs=SY.getVoices();SV=vs.find(v=>/en[-_]GB/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null;}catch(e){}}
+if(SY){spPick();try{SY.addEventListener('voiceschanged',spPick);}catch(e){SY.onvoiceschanged=spPick;}}
+function spStop(){try{if(SY)SY.cancel();}catch(e){}$('spHear').classList.remove('speaking');}
+function say(parts,rate){
+  if(!SY){$('spNoVoice').hidden=false;return;}
+  try{
+    SY.cancel();
+    const btn=$('spHear');btn.classList.add('speaking');
+    parts.forEach((t,k)=>{
+      const u=new SpeechSynthesisUtterance(t);u.lang='en-GB';u.rate=rate||0.9;if(SV)u.voice=SV;
+      if(k===parts.length-1){u.onend=()=>btn.classList.remove('speaking');u.onerror=u.onend;}
+      SY.speak(u);
+    });
+  }catch(e){$('spHear').classList.remove('speaking');}
+}
+function curW(){const r=SPS.run;return SPELL.words[r.order[r.idx]];}
+function sayAll(){const W=curW();say([W.w+'.',W.w+' means '+W.m,W.s.replace('______',W.w),'Spell: '+W.w+'.']);}
+function sayWord(slow){const W=curW();say([W.w+'.'],slow?0.55:0.85);}
+$('spHear').addEventListener('click',sayAll);
+$('spWord').addEventListener('click',()=>sayWord(false));
+$('spSlow').addEventListener('click',()=>sayWord(true));
+
+/* test flow: stage 1 = free typing, 2 = letter boxes, 3 = jumbled letters, 4 = shown the answer */
+function spNewRun(indices){
+  SPS.run={order:shuffle(indices),idx:0,stage:1,typed:'',tiles:null,placed:[],res:{},tries:{},done:false};
+  spSave();spShow('spellTest');spRender();sayAll();
+}
+$('spStart').addEventListener('click',()=>spNewRun(SPELL.words.map((_,i)=>i)));
+$('spResume').addEventListener('click',()=>{if(!SPS.run)return;spShow('spellTest');spRender();if(!SPS.run.done)sayAll();});
+$('spLastBtn').addEventListener('click',()=>{spShow('spellResults');spResults();});
+$('spBack').addEventListener('click',spGoHome);
+$('sprBack').addEventListener('click',spGoHome);
+
+function spRender(){
+  const r=SPS.run,W=curW(),n=W.w.length,wi=r.order[r.idx];
+  $('spNum').textContent=`Word ${r.idx+1} of ${r.order.length}`;
+  $('spDots').innerHTML=r.order.map((w,k)=>{const v=r.res[w];return `<i class="${k===r.idx&&!r.done?'cur':v?'r'+v:''}"></i>`;}).join('');
+  $('spMean').textContent=W.m.charAt(0).toUpperCase()+W.m.slice(1);
+  $('spSent').innerHTML=W.s.replace('______','<span class="gap" aria-label="missing word"></span>');
+  $('spNoVoice').hidden=!!SY;
+  const stageText={1:'Listen, write it on your sheet, then type it here.',2:`Not quite. Listen again. Clue: it has ${n} letters.`,3:'Nearly! Here are the letters, all jumbled up. Tap them in the right order.'};
+  const fbEl=$('spFb');
+  if(r.done){
+    const v=r.res[wi];
+    $('spStage').textContent=v===4?"Here's how to spell it:":'';
+    const last=(r.tries[wi]||[]).slice(-1)[0]||'';
+    $('spAnswer').innerHTML=`<div class="spword ${v!==4?'pop':''}">${fx(W.w)}</div>`+(v===4&&last?`<p class="spwas">You wrote: <s>${last.replace(/</g,'')}</s></p><p class="spwas">Try writing it 3 times on your sheet to help it stick.</p>`:'');
+    $('spTiles').innerHTML='';$('spKb').innerHTML='';
+    $('spCheck').hidden=true;$('spNext').hidden=false;
+    $('spNext').textContent=r.idx===r.order.length-1?'See my results ›':'Next word ›';
+    return;
+  }
+  $('spStage').textContent=stageText[r.stage];
+  $('spCheck').hidden=false;$('spNext').hidden=true;
+  if(r.stage===1){
+    $('spAnswer').innerHTML=`<div class="spline" aria-label="Your spelling">${r.typed?r.typed:'<span class="ph">Type the word…</span>'}<span class="caret"></span></div>`;
+  } else {
+    let b='<div class="spboxes" aria-label="Your spelling">';
+    for(let k=0;k<n;k++) b+=`<span class="spbox ${k===r.typed.length?'next':''}">${r.typed[k]||''}</span>`;
+    $('spAnswer').innerHTML=b+'</div>';
+  }
+  if(r.stage===3){
+    $('spKb').innerHTML='';
+    $('spTiles').innerHTML='<div class="sptiles">'+r.tiles.map((c,k)=>`<button class="ltile ${r.placed.includes(k)?'used':''}" data-t="${k}" aria-label="letter ${c}">${c}</button>`).join('')+'</div><div class="tilectl"><button class="tool" id="spUndo">Undo</button><button class="tool" id="spClr">Clear</button></div>';
+  } else {
+    $('spTiles').innerHTML='';
+    if(!$('spKb').firstChild) $('spKb').innerHTML=['qwertyuiop','asdfghjkl','zxcvbnm'].map((row,k)=>'<div class="kbrow">'+row.split('').map(c=>`<button class="key" data-k="${c}">${c}</button>`).join('')+(k===2?'<button class="key wide" data-k="del" aria-label="Delete">⌫</button>':'')+'</div>').join('');
+  }
+}
+function spKey(k){
+  const r=SPS.run;if(!r||r.done||r.stage===3)return;
+  const n=curW().w.length;
+  if(k==='del') r.typed=r.typed.slice(0,-1);
+  else if(/^[a-z]$/.test(k)){if(r.stage===2&&r.typed.length>=n)return;if(r.typed.length>=20)return;r.typed+=k;}
+  $('spFb').textContent='';$('spFb').className='fb';
+  spSave();spRender();
+}
+$('spKb').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b)spKey(b.dataset.k);});
+$('spTiles').addEventListener('click',e=>{
+  const r=SPS.run;if(!r||r.stage!==3||r.done)return;
+  const t=e.target.closest('[data-t]');
+  if(t){const k=+t.dataset.t;if(!r.placed.includes(k)){r.placed.push(k);}}
+  else if(e.target.id==='spUndo') r.placed.pop();
+  else if(e.target.id==='spClr') r.placed=[];
+  else return;
+  r.typed=r.placed.map(k=>r.tiles[k]).join('');
+  $('spFb').textContent='';$('spFb').className='fb';
+  spSave();spRender();
+});
+document.addEventListener('keydown',e=>{
+  if($('spellTest').hidden||e.ctrlKey||e.metaKey||e.altKey)return;
+  const r=SPS.run;if(!r)return;
+  if(e.key==='Enter'){e.preventDefault();if(r.done)$('spNext').click();else spCheck();return;}
+  if(r.done)return;
+  const k=e.key.toLowerCase();
+  if(r.stage===3){
+    if(e.key==='Backspace'){r.placed.pop();}
+    else if(/^[a-z]$/.test(k)){const i=r.tiles.findIndex((c,j)=>c===k&&!r.placed.includes(j));if(i<0)return;r.placed.push(i);}
+    else return;
+    r.typed=r.placed.map(j=>r.tiles[j]).join('');spSave();spRender();e.preventDefault();return;
+  }
+  if(e.key==='Backspace'){spKey('del');e.preventDefault();}
+  else if(/^[a-z]$/.test(k)){spKey(k);e.preventDefault();}
+});
+function spFb(t,c){$('spFb').textContent=t;$('spFb').className='fb '+(c||'');}
+function spCheck(){
+  const r=SPS.run;if(!r||r.done)return;
+  const W=curW(),wi=r.order[r.idx],n=W.w.length,a=r.typed.toLowerCase();
+  if(!a){spFb('Type the word first.');return;}
+  if(r.stage>1&&a.length<n){spFb(`Fill all ${n} boxes first.`);return;}
+  (r.tries[wi]=r.tries[wi]||[]).push(a);
+  if(a===W.w){
+    r.res[wi]=r.stage;r.done=true;spSave();spRender();
+    spFb(r.stage===1?'Correct, first time! ★':r.stage===2?'Correct! Well done.':'You got it!','ok');
+    return;
+  }
+  if(r.stage===1){r.stage=2;r.typed='';spSave();spRender();spFb('Not quite. Have another go.','no');sayAll();return;}
+  if(r.stage===2){
+    r.stage=3;r.typed='';r.placed=[];
+    let t=shuffle(W.w.split(''));for(let g=0;g<20&&t.join('')===W.w;g++)t=shuffle(W.w.split(''));
+    r.tiles=t;spSave();spRender();spFb('Not quite. Here are the letters to help.','no');sayWord(false);return;
+  }
+  r.res[wi]=4;r.done=true;spSave();spRender();spFb('Not this time, but that\'s how we learn.','no');
+}
+$('spCheck').addEventListener('click',spCheck);
+$('spNext').addEventListener('click',()=>{
+  const r=SPS.run;if(!r)return;
+  if(r.idx>=r.order.length-1){
+    SPS.last={order:r.order,res:r.res,tries:r.tries};SPS.run=null;spSave();
+    spStop();spShow('spellResults');spResults();return;
+  }
+  r.idx++;r.stage=1;r.typed='';r.tiles=null;r.placed=[];r.done=false;
+  spSave();spFb('');spRender();sayAll();
+});
+function spResults(){
+  const L=SPS.last;if(!L)return;
+  const tot=L.order.length,first=L.order.filter(w=>L.res[w]===1).length;
+  $('sprScore').textContent=first;
+  $('sprOf').innerHTML=`out of ${tot}<br>right first time`;
+  $('sprTitle').textContent=first===tot?'Perfect spelling!':'Spelling results';
+  $('sprMsg').textContent=first===tot?'Every word right first time. Amazing!':first>=tot*0.7?'Brilliant work! Just a few to practise.':first>0?'Good effort. Practise the tricky ones and try again.':'Keep practising. These are hard words!';
+  const lab={1:['Right first time ★','t1'],2:['With the letter boxes','t2'],3:['With the jumbled letters','t3'],4:['Still learning','t4']};
+  const ord=SPELL.words.map((_,i)=>i).filter(i=>L.order.includes(i));
+  $('sprRows').innerHTML=ord.map(i=>{const v=L.res[i]||4;return `<div class="sprow"><span class="w">${fx(SPELL.words[i].w)}</span><span class="tag ${lab[v][1]}">${lab[v][0]}</span></div>`;}).join('');
+  const tricky=L.order.filter(w=>L.res[w]!==1);
+  $('sprTricky').hidden=!tricky.length;
+  $('sprTricky').textContent=tricky.length===1?'Practise the tricky one':`Practise the ${tricky.length} tricky ones`;
+}
+$('sprTricky').addEventListener('click',()=>{const L=SPS.last;if(!L)return;const t=L.order.filter(w=>L.res[w]!==1);if(t.length)spNewRun(t);});
+$('sprAgain').addEventListener('click',()=>spNewRun(SPELL.words.map((_,i)=>i)));
+
+/* ---- choosing the year ---- */
+function setYear(y){
+  const C=YEARS[y];if(!C)return;
+  stopSpeak();spStop();
+  YEAR=y;APP=C.app;FRAC=C.frac;SPEECH=C.speech;Q=C.Q;SPELL=C.SPELL;TOPICS=C.TOPICS;
+  loadST();loadSPS();
+  try{localStorage.setItem('hh-year',y);}catch(e){}
+  $('yearChip').textContent=C.label+' · Change';
+  $('speak').hidden=!canSpeak();
+  spShow('home');
+  renderHome();
+  let tab='maths';try{if(localStorage.getItem(APP+'-tab')==='spell')tab='spell';}catch(e){}
+  setTab(tab);
+}
+function showPick(){stopSpeak();spStop();spShow('pick');}
+document.querySelectorAll('.yearbtn').forEach(b=>b.addEventListener('click',()=>setYear(b.dataset.y)));
+$('yearChip').addEventListener('click',showPick);
+(function init(){let y=null;try{y=localStorage.getItem('hh-year');}catch(e){}if(YEARS[y])setYear(y);else showPick();})();
+</script>
+</body>
+</html>

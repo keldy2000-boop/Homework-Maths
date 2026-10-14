@@ -381,6 +381,48 @@ mark.fx{background:var(--hl-bg);color:var(--rose);border-radius:4px;padding:0 .0
 .yearbtn:active{transform:translateY(2px)}
 .homehead{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
 .yearchip{border:2px solid var(--ink);background:var(--card);border-radius:999px;padding:.35rem .9rem;font-weight:700;font-size:.95rem}
+
+/* front page test */
+.sect{font-size:1.4rem;margin:2.2rem 0 .7rem}
+.yearbtn{position:relative}
+.yearbtn .lastused{position:absolute;top:.8rem;right:1rem;font-size:.8rem;font-weight:700;color:var(--ten);background:var(--soft);border-radius:999px;padding:.1rem .6rem}
+.tcard{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:1rem}
+.tcard+.tcard{margin-top:12px}
+.thead{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;color:var(--muted);font-size:.92rem}
+.tq{font-size:1.25rem;font-weight:700;margin:.5rem 0 1rem;line-height:1.5}
+.alg{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400}
+.tq .frac{font-size:1em}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.opt{border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-size:1.45rem;font-weight:700;padding:.75rem .2rem;white-space:nowrap;touch-action:manipulation}
+.opt:active{transform:translateY(2px)}
+.opt.wrong{border-style:dashed;border-color:var(--muted);color:var(--muted);text-decoration:line-through;opacity:.6}
+.opt.right{background:var(--leaf);border-color:var(--leaf);color:var(--card)}
+.opt.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.tfb{margin:.9rem 0 0;font-size:1.05rem;min-height:1.4em}
+.tfb.ok{color:var(--leaf);font-weight:700}
+.tfb.no{color:var(--rose)}
+.tactions{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+.thelp{margin-top:1rem;border-top:2px dashed var(--line);padding-top:1rem}
+.thelp h3{margin:0 0 .6rem;font-size:1.1rem}
+.tstage{min-height:150px;border:2px solid var(--ink);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px 8px;
+  background-color:var(--card);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;background-position:-1px -1px}
+.tsay{margin:.8rem 0;font-size:1.05rem;min-height:3em}
+.tctrl{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.tctrl .btn{min-width:5.5rem;padding:.45rem 1rem}
+.bigfrac{display:inline-flex;flex-direction:column;align-items:center;font-size:2.6rem;font-weight:700;line-height:1.1}
+.bigfrac .fl{display:block;width:100%;min-width:3.2rem;height:4px;background:var(--rose);border-radius:2px;margin:.15rem 0}
+.divrow{display:flex;align-items:center;gap:.5rem;font-size:2.6rem;font-weight:700;line-height:1}
+.dsign{display:inline-flex;flex-direction:column;align-items:center;gap:.28rem}
+.dsign i{display:block;width:.38rem;height:.38rem;border-radius:50%;background:var(--rose)}
+.dsign b{display:block;width:1.5rem;height:4px;background:var(--rose);border-radius:2px}
+.dsign.giant{gap:.55rem}.dsign.giant i{width:.8rem;height:.8rem}.dsign.giant b{width:3.4rem;height:7px}
+.mv{display:inline-block;animation:slideXY .9s cubic-bezier(.5,0,.3,1) both;animation-delay:var(--d,0s)}
+@keyframes slideXY{from{transform:translate(var(--fx,0),var(--fy,0))}to{transform:none}}
+.shrink{animation:shrinkX .9s cubic-bezier(.5,0,.3,1) both}
+@keyframes shrinkX{from{transform:scaleX(2.4)}to{transform:none}}
+.tlabel{font-family:var(--pen);font-size:1.25rem;color:var(--rose)}
+@media (prefers-reduced-motion: reduce){.mv,.shrink,.opt.shake{animation-duration:.01s!important;animation-delay:0s!important}}
 </style>
 </head>
 <body>
@@ -392,10 +434,13 @@ mark.fx{background:var(--hl-bg);color:var(--rose);border-radius:4px;padding:0 .0
       <button class="yearbtn" data-y="y4"><b>Year 4</b><span>20 maths questions and ‘inter’ spellings</span></button>
       <button class="yearbtn" data-y="y6"><b>Year 6</b><span>28 maths questions and ‘tial’ spellings</span></button>
     </div>
+    <h2 class="sect">Test</h2>
+    <div id="tests"></div>
   </section>
 
   <section id="home" hidden>
-    <div class="homehead"><h1>Homework helper</h1><button class="yearchip" id="yearChip" aria-label="Change year">Year 6 · Change</button></div>
+    <div class="lbar"><button class="link" id="yearChip">‹ Front page</button></div>
+    <h1 id="yearTitle">Year 6</h1>
     <div class="tabs" role="tablist">
       <button class="tabbtn" role="tab" id="tabMaths" aria-selected="true">Maths</button>
       <button class="tabbtn" role="tab" id="tabSpell" aria-selected="false">Spellings</button>
@@ -2188,17 +2233,94 @@ function setYear(y){
   YEAR=y;APP=C.app;FRAC=C.frac;SPEECH=C.speech;Q=C.Q;SPELL=C.SPELL;TOPICS=C.TOPICS;
   loadST();loadSPS();
   try{localStorage.setItem('hh-year',y);}catch(e){}
-  $('yearChip').textContent=C.label+' · Change';
+  $('yearTitle').textContent=C.label;
   $('speak').hidden=!canSpeak();
   spShow('home');
   renderHome();
   let tab='maths';try{if(localStorage.getItem(APP+'-tab')==='spell')tab='spell';}catch(e){}
   setTab(tab);
 }
-function showPick(){stopSpeak();spStop();spShow('pick');}
+
+/* ---- front page test ---- */
+const ALG=s=>s.replace(/y/g,'<span class="alg">y</span>');
+const YF=`<span class="frac"><span class="alg">y</span><span>3</span></span>`;
+const TESTS=[{
+  id:'alg1',
+  q:`Which of the expressions below means the same as ${YF}?`,
+  opts:['y + 3','y − 3','y ÷ 3','3 × y','3 − y','3 ÷ y'],
+  ans:2,
+  right:'Yes! A fraction line means divide, and the top comes first.',
+  why:['That adds 3. A fraction line means divide, not add.','That takes 3 away. A fraction line means divide.',null,'That multiplies. A fraction line means divide.','That takes away, and it\'s the wrong way round too.','Close, but it\'s the wrong way round! The top of the fraction comes first.'],
+  say:['A fraction line means <b>divide</b>. Let\'s look at a number example first: 12 over 3.',
+       'The top number is divided by the bottom number. So 12 over 3 means <b>12 ÷ 3</b>. The top number comes first!',
+       'Here\'s a handy way to remember it: the ÷ sign looks like a tiny fraction, with a dot on top, a line, and a dot underneath.',
+       'Careful with the order: 12 ÷ 3 is 4, but 3 ÷ 12 is a lot smaller. Swapping them changes the answer.',
+       'Your turn! Do the same with <span class="alg">y</span> over 3. Which card matches?'],
+  draw(s){
+    if(s===0) return `<div class="bigfrac pop"><span>12</span><span class="fl"></span><span>3</span></div><div class="tlabel write" style="--d:.5s">the line means divide</div>`;
+    if(s===1) return `<div class="divrow"><span class="mv" style="--fx:2.4rem;--fy:-2.6rem">12</span><span class="dsign"><i class="pop" style="--d:.9s"></i><b class="shrink"></b><i class="pop" style="--d:1.05s"></i></span><span class="mv" style="--fx:-2rem;--fy:2.6rem">3</span></div><div class="tlabel write" style="--d:1.3s">12 over 3 = 12 ÷ 3</div>`;
+    if(s===2) return `<div class="dsign giant pop"><i></i><b></b><i></i></div><div class="tlabel write" style="--d:.5s">dot, line, dot: a tiny fraction</div>`;
+    if(s===3) return `<div class="divrow"><span>12 ÷ 3 = 4</span></div><div class="divrow" style="font-size:1.9rem;color:var(--muted)"><span class="fade" style="--d:.5s">3 ÷ 12 is not 4</span></div>`;
+    return `<div class="bigfrac pop"><span class="alg">y</span><span class="fl"></span><span>3</span></div><div class="tlabel write" style="--d:.5s">= ? Find the matching card</div>`;
+  }
+}];
+const TKEY='hh-test';
+let TST={};try{TST=JSON.parse(localStorage.getItem(TKEY)||'{}')||{};}catch(e){TST={};}
+function tSave(){try{localStorage.setItem(TKEY,JSON.stringify(TST));}catch(e){}}
+function tS(id){if(!TST[id])TST[id]={t:0,s:0,h:0,u:0,w:[]};return TST[id];}
+const tStep={};
+function renderTests(){
+  $('tests').innerHTML=TESTS.map((T,n)=>{
+    const S=tS(T.id),left=3-S.t;
+    const status=S.s?`<span class="tag ok">${S.h?'☆ Solved with help':'★ Solved on your own'}</span>`:S.u?'<span class="tag">Help unlocked</span>':`<span class="tries"><span>Tries left</span>${[0,1,2].map(k=>`<i class="${k<left?'on':''}"></i>`).join('')}</span>`;
+    const opts=T.opts.map((o,i)=>{const cls=S.s&&i===T.ans?'right':S.w.includes(i)?'wrong':'';return `<button class="opt ${cls}" data-t="${n}" data-o="${i}" ${S.s||S.w.includes(i)?'disabled':''} aria-label="${o.replace('÷','divided by').replace('×','times').replace('−','minus')}">${ALG(o)}</button>`;}).join('');
+    const help=(S.u||tStep[T.id]!==undefined)?tHelpHTML(T,n):'';
+    const showHelpBtn=S.s&&!S.u&&tStep[T.id]===undefined?`<button class="link" data-help="${n}">See how it works</button>`:'';
+    const again=S.s?`<button class="link" data-reset="${n}">Have another go</button>`:'';
+    return `<div class="tcard" id="tc-${T.id}"><div class="thead"><span>Question ${n+1}</span>${status}</div><div class="tq">${T.q}</div><div class="opts">${opts}</div><p class="tfb" id="tfb-${T.id}" aria-live="polite"></p><div class="tactions">${showHelpBtn}${again}</div>${help}</div>`;
+  }).join('');
+}
+function tHelpHTML(T,n){
+  const k=tStep[T.id]||0,last=T.say.length-1;
+  return `<div class="thelp"><h3>How to work it out</h3><div class="tstage">${T.draw(k)}</div><p class="tsay">${T.say[k]}</p><div class="tctrl"><button class="btn" data-tprev="${n}" ${k===0?'disabled':''}>Back</button><span class="dots">${T.say.map((_,i)=>`<i class="${i<=k?'on':''}"></i>`).join('')}</span><button class="btn primary" data-tnext="${n}" ${k===last?'disabled':''}>Next</button></div></div>`;
+}
+function tFb(T,msg,cls){const el=$('tfb-'+T.id);if(el){el.textContent=msg;el.className='tfb '+(cls||'');}}
+$('tests').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.o!==undefined){
+    const T=TESTS[+b.dataset.t],S=tS(T.id),i=+b.dataset.o;
+    if(S.s)return;
+    if(i===T.ans){
+      S.s=1;S.h=S.u?1:0;tSave();renderTests();tFb(T,T.right,'ok');
+      const c=$('tc-'+T.id).querySelector('.thead');if(c)c.insertAdjacentHTML('beforeend','<span class="bigstar pop" aria-hidden="true">★</span>');
+      return;
+    }
+    if(!S.w.includes(i))S.w.push(i);
+    let msg;
+    if(S.u){msg=T.why[i]||'Not quite. Try another card.';}
+    else{S.t++;
+      if(S.t>=3){S.u=1;tStep[T.id]=0;msg="That's 3 tries. Let's work through it together below, then try again.";}
+      else{const left=3-S.t;msg=`Not quite. Have another think. ${left} ${left===1?'try':'tries'} left.`;}
+    }
+    tSave();renderTests();tFb(T,msg,'no');
+    const nb=document.querySelector(`.opt[data-t="${b.dataset.t}"][data-o="${i}"]`);if(nb){nb.classList.add('shake');}
+    return;
+  }
+  if(b.dataset.tnext!==undefined||b.dataset.tprev!==undefined){
+    const n=+(b.dataset.tnext??b.dataset.tprev),T=TESTS[n],last=T.say.length-1;
+    let k=tStep[T.id]||0;k=b.dataset.tnext!==undefined?Math.min(last,k+1):Math.max(0,k-1);tStep[T.id]=k;
+    const card=$('tc-'+T.id),old=card.querySelector('.thelp');if(old)old.outerHTML=tHelpHTML(T,n);
+    return;
+  }
+  if(b.dataset.help!==undefined){const T=TESTS[+b.dataset.help];tStep[T.id]=0;renderTests();return;}
+  if(b.dataset.reset!==undefined){const T=TESTS[+b.dataset.reset];TST[T.id]={t:0,s:0,h:0,u:0,w:[]};delete tStep[T.id];tSave();renderTests();return;}
+});
+function markLastYear(){let y=null;try{y=localStorage.getItem('hh-year');}catch(e){}document.querySelectorAll('.yearbtn').forEach(b=>{const old=b.querySelector('.lastused');if(old)old.remove();if(b.dataset.y===y)b.insertAdjacentHTML('beforeend','<span class="lastused">Last used</span>');});}
+
+function showPick(){stopSpeak();spStop();spShow('pick');markLastYear();renderTests();}
 document.querySelectorAll('.yearbtn').forEach(b=>b.addEventListener('click',()=>setYear(b.dataset.y)));
 $('yearChip').addEventListener('click',showPick);
-(function init(){let y=null;try{y=localStorage.getItem('hh-year');}catch(e){}if(YEARS[y])setYear(y);else showPick();})();
+(function init(){showPick();})();
 </script>
 </body>
 </html>

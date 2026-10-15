@@ -8,6 +8,8 @@ https://keldy2000-boop.github.io/Homework-Maths/
 
 Everything lives in **`index.html`**: one self-contained page with its own CSS and JavaScript. There is no build step and no other file is loaded, apart from two Google Fonts (Andika and Patrick Hand) with fallbacks.
 
+The phone home-screen icon uses `apple-touch-icon.png` (iPhone), `icon-192.png` and `icon-512.png` (Android, via `manifest.webmanifest`) and `favicon-32.png` (browser tab). The manifest uses `"display": "browser"` on purpose: the icon opens the normal browser, so saved progress is the same whether the page is opened from the icon or a bookmark.
+
 Other files in this repo (`app.js`, `style.css`, `visuals.js`, `homework/`, `tools/`) come from an earlier, separate version. `index.html` does not use them. Ask before deleting them.
 
 ## Rules to keep

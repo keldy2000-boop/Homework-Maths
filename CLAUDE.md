@@ -2,7 +2,7 @@
 
 Static site on GitHub Pages from `main`, root folder (https://keldy2000-boop.github.io/Homework-Maths/). Full handover notes: `HOMEWORK-HELPER.md`.
 
-**The live site is `index.html` alone**: one self-contained page with its own CSS and JS, no build step (only Google Fonts Andika and Patrick Hand load from outside). It must stay named `index.html` in the root.
+**The live site is `index.html` alone**: one self-contained page with its own CSS and JS, no build step (only Google Fonts Andika and Patrick Hand load from outside). It must stay named `index.html` in the root. The home-screen icon files sit beside it: `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `favicon-32.png` and `manifest.webmanifest` (display `browser`, so the icon opens the normal browser and progress is shared with it).
 `app.js`, `style.css`, `visuals.js`, `homework/`, `tools/` and the `new-homework` skill in `.claude/skills/` belong to an earlier version that `index.html` does not use. Ask the parent before deleting them, and before following that skill (it builds weeks for the old version).
 
 ## Rules

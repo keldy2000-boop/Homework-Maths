@@ -23,7 +23,8 @@ Static site on GitHub Pages from `main`, root folder (https://keldy2000-boop.git
 ## Adding things
 - Maths question: add to `Q4`/`Q6` and its number to `TOPICS4`/`TOPICS6`.
 - A new week's maths (replacing all of `Q4`/`Q6`): also change that year's `wk` in `YEARS` (add one if missing), so each device clears last week's answers and working out for that year (`y4-wk` / `y6-wk`). Update the question count on the front-page year button.
-- Spelling list: replace words in `SPELL4`/`SPELL6`; update `spTitle`/`spRule` in `YEARS`.
+- Spelling list: replace words in `SPELL4`/`SPELL6`; update `spTitle`/`spRule` in `YEARS`. A new `spTitle` clears that year's saved spelling test on each device. Use `focus:''` when the list has no shared letter pattern.
+- A second set of maths in the same week: add the questions to the end of `Q4`/`Q6` and keep `wk` the same, so earlier progress is kept.
 - Front-page test question: add to `TESTS`.
 
 ## Before every commit

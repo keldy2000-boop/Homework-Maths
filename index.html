@@ -451,8 +451,8 @@ mark.fx{background:var(--hl-bg);color:var(--rose);border-radius:4px;padding:0 .0
     <h1>Homework helper</h1>
     <p class="intro">Which year are you in?</p>
     <div class="yearbtns">
-      <button class="yearbtn" data-y="y4"><b>Year 4</b><span>20 maths questions and ‘inter’ spellings</span></button>
-      <button class="yearbtn" data-y="y6"><b>Year 6</b><span>26 maths questions and ‘tial’ spellings</span></button>
+      <button class="yearbtn" data-y="y4"><b>Year 4</b><span>20 maths questions and spellings</span></button>
+      <button class="yearbtn" data-y="y6"><b>Year 6</b><span>39 maths questions and spellings</span></button>
     </div>
     <h2 class="sect">Test</h2>
     <div id="tests"></div>
@@ -653,7 +653,7 @@ function colm(c,rows){
   }
   return h+'</div>';
 }
-function pvChart(s,k,cnt,rem,digits){
+function pvChart(s,k,cnt,rem,digits,add){
   const cols=[['h','Hundreds','100'],['t','Tens','10'],['o','Ones','1']];
   const base={h:0,t:.5,o:.9};
   let h=`<div class="pv ${s===k?'fade':''}">`;
@@ -663,7 +663,8 @@ function pvChart(s,k,cnt,rem,digits){
     for(let i=0;i<n;i++){
       let r=null,rd=0;
       if(rem&&rem.col===key&&i>=n-rem.n){r=rem.step;rd=0.2+(i-(n-rem.n))*0.4;}
-      h+=el('span',`disc ${key}`,life(s,k,r,base[key]+i*0.07,rd),val);
+      const ad=add&&add.col===key&&i>=n-add.n;
+      h+=el('span',`disc ${key}`,life(s,ad?add.step:k,r,ad?0.2+(i-(n-add.n))*0.3:base[key]+i*0.07,rd),val);
     }
     h+='</div>';
     if(digits) h+=`<div class="pvd">${digits[key]}</div>`;
@@ -722,354 +723,335 @@ function miniX10(s,k){
   </div>`;
 }
 
-/* ---------- the 20 questions ---------- */
-const Q=[
-{q:`5 + 8 + 5 = ${BOX}`,ans:18,
- hint:"Not quite. Use the two 5s to make 10, then add on the 8.",
- say:["Three numbers to add. Here's a clever trick: look for two numbers that make <b>10</b> first.",
-      "Spot the two 5s! 5 + 5 fills a whole ten frame. That makes 10.",
-      "Now there's just the 8 left to add on.",
-      "Your turn! What is 10 + 8? That's the number for the box."],
- draw(s){
-  const ring=(k,c)=>s>=k?c:'';
-  let h=`<div class="row">
-    <span class="nc ${ring(1,'hl')} ${s===1?'pulse':''}">5</span><span class="op">+</span>
-    <span class="nc ${ring(2,'hl2')} ${s===2?'pulse':''}">8</span><span class="op">+</span>
-    <span class="nc ${ring(1,'hl')} ${s===1?'pulse':''}" ${D(.15)}>5</span></div><div class="frames">`;
-  if(s>=1) h+=`<div class="fbox">${tf(10,'d-rose',s===1,i=>0.4+i*0.12)}${pen('5 + 5 = 10','',s===1?'write':'',1.7)}</div>`;
-  if(s>=2) h+=`<div class="fbox">${tf(8,'',s===2,i=>0.2+i*0.12)}${pen('8','',s===2?'write':'',1.2)}</div>`;
-  h+='</div>';
-  if(s>=3) h+=pen('10 + 8 = ?','rose','fade');
-  return h;
- }},
-
-{q:`3 × ${BOX} = 33`,ans:11,
- hint:"Not quite. Look inside one group. How many tens and how many ones are there?",
- say:["3 lots of a mystery number make 33. Let's share 33 into <b>3 equal groups</b>. One group will be the mystery number.",
-      "Here's 33 made from blocks: 3 tens and 3 ones.",
-      "Share the tens: one ten goes into each group.",
-      "Now share the ones: one cube goes into each group. Everything is shared out fairly!",
-      "Your turn! What is one group worth? That's the missing number."],
- draw(s){
-  let h='<div class="row pile">';
-  if(s===0) h+=pen('33 shared into 3 groups');
-  for(let i=0;i<3;i++) h+=el('span','rod',life(s,1,2,i*0.15,0.3+i*0.5));
-  if(s>=1) h+='<span class="gap"></span>';
-  for(let i=0;i<3;i++) h+=el('span','cube',life(s,1,3,0.5+i*0.15,0.3+i*0.5));
-  h+='</div>';
-  if(s>=1) h+=pen('3 tens and 3 ones','',s===1?'write':'',0.9);
-  h+='<div class="groups">';
-  for(let g=0;g<3;g++){
-    h+=`<div class="grp ${s===0?'fade':''}" ${D(g*0.15)}>`;
-    h+=el('span','rod',life(s,2,null,0.3+g*0.5));
-    h+=el('span','cube',life(s,3,null,0.3+g*0.5));
-    h+='</div>';
+/* ---------- the 20 questions (Autumn Test 6) ---------- */
+function fbar6(s,shade,kShade,add,kAdd){
+  let h=`<div class="fwrap"><div class="fbar ${s===0?'fade':''}" style="grid-template-columns:repeat(6,1fr)">`;
+  for(let i=0;i<6;i++){
+    const L=i<shade?life(s,kShade,null,i*0.25):i<shade+add?life(s,kAdd,null,(i-shade)*0.35):null;
+    h+=`<i>${L?`<b class="${L.c}" ${sty(L,i>=shade?'background:var(--rose)':'')}></b>`:''}</i>`;
   }
-  h+='</div>';
-  if(s>=4) h+=pen('one group = ?','rose','fade');
-  return h;
- }},
-
-{q:`4 × 4 = ${BOX}`,ans:16,
- hint:"Not quite. Count on 4 more from 12. Use your fingers if it helps!",
- say:["4 × 4 means <b>4 lots of 4</b>. Let's build it as an array: 4 rows with 4 dots in each row.",
-      "Row 1: 4 dots.",
-      "Row 2: count on 4 more. That's 8.",
-      "Row 3: count on 4 more. That's 12.",
-      "Row 4: count on 4 more from 12. Your turn! How many dots are there altogether?"],
- draw(s){
-  let h='<div class="arr big">';
-  for(let r=0;r<4;r++){
+  return h+'</div><div class="fnums" style="grid-template-columns:repeat(6,1fr)">'+[1,2,3,4,5,6].map(n=>`<span>${n}</span>`).join('')+'</div></div>';
+}
+function rowsOf(s,rows,per,kOf,lab){
+  let h='<div class="arr">';
+  for(let r=0;r<rows;r++){
+    const k=kOf(r);
     h+='<div class="arrrow">';
-    for(let c=0;c<4;c++){const L=life(s,r+1,null,c*0.15);h+=L?`<span class="dot ${L.c}" ${sty(L)}></span>`:'<span class="dot d-ghost"></span>';}
-    const LL=life(s,r+1,null,0.7,0,'write');
-    h+=LL?`<span class="arrlbl ${LL.c}" ${sty(LL)}>${r<3?(r+1)*4:'?'}</span>`:'<span class="arrlbl"></span>';
+    for(let c=0;c<per;c++){const L=life(s,k,null,c*0.08);h+=L?`<span class="dot ${L.c}" ${sty(L)}></span>`:'<span class="dot d-ghost"></span>';}
+    const LL=life(s,k,null,0.6,0,'write');
+    h+=LL?`<span class="arrlbl ${LL.c}" ${sty(LL)}>${lab(r)}</span>`:'<span class="arrlbl"></span>';
     h+='</div>';
   }
   return h+'</div>';
- }},
-
-{q:`${BOX} = 438 − 20`,ans:418,
- hint:"Not quite. Only the tens change. Start with 3 tens and take 2 away.",
- say:["The box is on the left this time, and that's fine! The = sign means <b>is the same as</b>. So we just work out 438 − 20.",
-      "Make 438 in a place value chart: 4 hundreds, 3 tens and 8 ones.",
-      "20 is the same as 2 tens. So take away 2 of the tens.",
-      "The hundreds and the ones don't change. Your turn! What number is left?"],
+}
+const Q=[
+{q:`${BOX} = 6 × 10`,ans:60,special:{16:"That's 6 + 10. The × sign means lots of: 6 lots of 10.",600:"That's 6 × 100. We only need 6 lots of 10."},
+ hint:"Not quite. Count the tens rods in 10s: 10, 20, 30…",
+ say:["The box is on the left, and that's fine! The = sign means <b>is the same as</b>. So we just work out 6 × 10.",
+      "6 × 10 means <b>6 lots of 10</b>. Each rod is worth 10. Here are 6 rods.",
+      "6 lots of 10 is 6 tens.",
+      "Your turn! Count the rods in 10s. How much are 6 tens worth?"],
  draw(s){
-  let h=pen(`${BOX} is the same as 438 − 20`);
-  if(s>=1) h+=pvChart(s,1,{h:4,t:3,o:8},{col:'t',n:2,step:2},s>=3?{h:dg('4',s===3),t:dg(MQ,s===3,.2),o:dg('8',s===3,.4)}:null);
-  if(s>=2) h+=pen('take away 2 tens','rose',s===2?'write':'',1);
+  let h=pen(`${BOX} is the same as 6 × 10`);
+  if(s>=1){h+='<div class="row pile">';for(let i=0;i<6;i++)h+=el('span','rod',life(s,1,null,i*0.2));h+='</div>';}
+  if(s>=2) h+=pen('6 lots of 10 = 6 tens','',s===2?'write':'',0.3);
+  if(s>=3) h+=pen('6 tens = ?','rose','fade');
   return h;
  }},
 
-{q:`6 × 0 = ${BOX}`,ans:0,
+{q:`5 × 11 = ${BOX}`,ans:55,special:{16:"That's 5 + 11. The × sign means lots of: 5 lots of 11."},
+ hint:"Not quite. 5 × 10 = 50, and 5 × 1 = 5. Add them together.",
+ say:["5 × 11 means <b>5 rows of 11</b>. Here's a trick: 11 is 10 and 1 more.",
+      "The blue dots are 5 rows of 10. That's 5 × 10 = 50.",
+      "The pink dots are 5 rows of 1 more. That's 5 × 1 = 5.",
+      "Your turn! Add the blue dots and the pink dots: 50 + 5."],
+ draw(s){
+  let h='<div class="arr">';
+  for(let r=0;r<5;r++){
+    h+='<div class="arrrow">';
+    for(let c=0;c<11;c++){const L=life(s,c<10?1:2,null,c<10?r*0.15+c*0.02:r*0.2);h+=L?`<span class="dot ${c===10?'d-rose':''} ${L.c}" ${sty(L)}></span>`:'<span class="dot d-ghost"></span>';}
+    h+='</div>';
+  }
+  h+='</div>';
+  if(s>=1) h+=pen('blue: 5 × 10 = 50','',s===1?'write':'',1);
+  if(s>=2) h+=pen('pink: 5 × 1 = 5','rose',s===2?'write':'',1);
+  if(s>=3) h+=pen('50 + 5 = ?','rose','fade');
+  return h;
+ }},
+
+{q:`211 + 400 = ${BOX}`,ans:611,special:{215:"Careful! 400 is 4 hundreds, not 4 ones.",251:"Careful! 400 is 4 hundreds, not 4 tens."},
+ hint:"Not quite. 400 is 4 hundreds. Add them to the 2 hundreds. The tens and ones stay the same.",
+ say:["Make 211 in a place value chart: 2 hundreds, 1 ten and 1 one.",
+      "400 is the same as <b>4 hundreds</b>. Add 4 more hundreds to the chart.",
+      "Only the hundreds change. The tens and the ones stay the same.",
+      "Your turn! How many hundreds are there now? What's the whole number?"],
+ draw(s){
+  let h=pvChart(s,0,{h:6,t:1,o:1},null,s>=2?{h:dg(MQ,s===2),t:dg('1',s===2,.2),o:dg('1',s===2,.4)}:null,{col:'h',n:4,step:1});
+  const notes=['211 = 2 hundreds, 1 ten, 1 one','add 4 hundreds','the tens and ones stay the same','? hundreds, 1 ten, 1 one'];
+  return h+pen(notes[s],s>=1?'rose':'','write',s===1?1:0.3);
+ }},
+
+{q:`9 × 0 = ${BOX}`,ans:0,special:{9:"9 × 1 is 9. But here it's 9 lots of 0.",90:"That's 9 × 10. Here it's 9 lots of 0."},
  hint:"Not quite. Look at the plates again. How many cookies can you see?",
- say:["6 × 0 means <b>6 lots of 0</b>. Let's imagine some plates of cookies.",
-      "Here are 6 plates.",
+ say:["9 × 0 means <b>9 lots of 0</b>. Let's imagine some plates of cookies.",
+      "Here are 9 plates.",
       "Now put 0 cookies on each plate. That's no cookies at all!",
       "Your turn! How many cookies are there altogether?"],
  draw(s){
-  if(s===0) return pen('6 lots of 0','','write',0.2);
+  if(s===0) return pen('9 lots of 0','','write',0.2);
   let h='<div class="plates">';
-  for(let i=0;i<6;i++) h+=`<span class="plate ${s===1?'pop':''}" ${D(i*0.15)}>${s>=2?`<span class="${s===2?'pop':''}" ${D(0.3+i*0.25)}>0</span>`:''}</span>`;
+  for(let i=0;i<9;i++) h+=`<span class="plate ${s===1?'pop':''}" ${D(i*0.12)}>${s>=2?`<span class="${s===2?'pop':''}" ${D(0.3+i*0.2)}>0</span>`:''}</span>`;
   h+='</div>';
-  return h+pen(['','6 plates','0 cookies on each plate','6 lots of 0 = ?'][s],s===3?'rose':'','write',s===2?2:0.4);
+  return h+pen(['','9 plates','0 cookies on each plate','9 lots of 0 = ?'][s],s===3?'rose':'','write',s===2?2:0.4);
  }},
 
-{q:`${fr(7,9)} − ${fr(2,9)} = ${BOX}`,ans:[5,9],frac:true,
- hint:"Not quite. Count the shaded pieces that are left. The bottom number stays 9.",
- say:["The bottom number is 9. It tells us the whole bar is cut into <b>9 equal pieces</b>. Each piece is one ninth.",
-      "Seven ninths means 7 of those pieces are shaded.",
-      "Take away two ninths: rub out 2 of the shaded pieces.",
-      "The pieces are still ninths, so the bottom number stays 9. Your turn! How many ninths are left?"],
+{q:`88 ÷ 11 = ${BOX}`,ans:8,special:{77:"That's 88 − 11. ÷ means how many 11s fit into 88."},
+ hint:"Not quite. Count up in 11s until you reach 88. How many 11s did you count?",
+ say:["88 ÷ 11 asks: <b>how many 11s fit into 88?</b> Let's count up in 11s.",
+      "The 11 times table has a pattern: both digits are the same! 1 × 11 = 11, 2 × 11 = 22, 3 × 11 = 33.",
+      "Keep going: 44, 55, 66, 77…",
+      "The next one is 88! Your turn! How many 11s make 88?"],
  draw(s){
-  let h=`<div class="fwrap"><div class="fbar ${s===0?'fade':''}">`;
-  for(let i=0;i<9;i++){
-    const L=i<7?life(s,1,i>=5?2:null,i*0.18,0.2+(i-5)*0.45):null;
-    h+=`<i>${L?`<b class="${L.c}" ${sty(L)}></b>`:''}</i>`;
-  }
-  h+='</div><div class="fnums">'+[1,2,3,4,5,6,7,8,9].map(n=>`<span>${n}</span>`).join('')+'</div></div>';
-  const labs=['9 equal pieces',`${fr(7,9)} shaded`,`${fr(7,9)} − ${fr(2,9)}`,`${fr('?',9)} left`];
+  if(s===0) return pen('How many 11s fit into 88?','','write',0.2);
+  const rows=[['1 × 11','11'],['2 × 11','22'],['3 × 11','33'],['4 × 11','44'],['5 × 11','55'],['6 × 11','66'],['7 × 11','77'],['? × 11','88']];
+  let h='<div class="ctab">';
+  rows.forEach((r,i)=>{
+    const k=i<3?1:i<7?2:3;
+    const L=life(s,k,null,(k===1?i:k===2?i-3:0)*0.4+0.2,0,'fade');
+    if(L){const c=`${L.c} ${i===7?'rose':''}`;h+=`<span class="${c}" ${sty(L)}>${r[0]}</span><span class="${c}" ${sty(L)}>= ${r[1]}</span>`;}
+  });
+  return h+'</div>';
+ }},
+
+{q:`${fr(2,6)} + ${fr(3,6)} = ${BOX}`,ans:[5,6],frac:true,
+ hint:"Not quite. Count all the shaded pieces. The bottom number stays 6.",
+ say:["The bottom number is 6. It tells us the whole bar is cut into <b>6 equal pieces</b>. Each piece is one sixth.",
+      "Two sixths: shade 2 of the pieces blue.",
+      "Add three sixths: shade 3 more pieces pink.",
+      "The pieces are still sixths, so the bottom number stays 6. Don't add the bottom numbers! Your turn! How many sixths are shaded altogether?"],
+ draw(s){
+  const h=fbar6(s,2,1,3,2);
+  const labs=['6 equal pieces',`${fr(2,6)} shaded`,`${fr(2,6)} + ${fr(3,6)}`,`${fr('?',6)} altogether`];
   return h+pen(labs[s],s===3?'rose':'','write',0.2);
  }},
 
-{q:`${BOX} + 400 = 826`,ans:426,
- hint:"Not quite. Take 4 hundreds away from 8 hundreds. The tens and ones stay the same.",
- say:["Something add 400 makes 826. Let's draw it as a bar so we can see what's going on.",
-      "The whole bar is 826. It's made of two parts: the mystery number and 400.",
-      "To find a missing part, take the part you know away from the whole: 826 − 400.",
-      "Make 826 in a place value chart: 8 hundreds, 2 tens and 6 ones.",
-      "400 is the same as 4 hundreds. Take 4 of the hundreds away.",
-      "The tens and the ones don't change. Your turn! What's left? That's the missing number."],
+{q:`13 ÷ 1 = ${BOX}`,ans:13,special:{1:"That would be 13 ÷ 13. Sharing into 1 group means everything goes into that one group.",12:"That's 13 − 1. ÷ 1 means share into 1 group.",14:"That's 13 + 1. ÷ 1 means share into 1 group."},
+ hint:"Not quite. If you share 13 counters into just 1 group, how many are in that group?",
+ say:["13 ÷ 1 means <b>share 13 into 1 group</b>. Let's try it with 8 counters first.",
+      "Here are 8 counters, and just 1 group to share them into.",
+      "Share them out: every counter goes into the same group! So 8 ÷ 1 = 8.",
+      "Your turn! If you share 13 counters into 1 group, how many are in the group?"],
  draw(s){
-  let h=bar(s,0,'826',[{t:MQ,f:426},{t:'400',f:400}],1);
-  if(s>=2) h+=pen('826 − 400','',s===2?'write':'',0.2);
-  if(s>=3) h+=pvChart(s,3,{h:8,t:2,o:6},{col:'h',n:4,step:4},s>=5?{h:dg(MQ,s===5),t:dg('2',s===5,.2),o:dg('6',s===5,.4)}:null);
+  let h='';
+  if(s===0) return pen('8 ÷ 1: share 8 into 1 group','','write',0.2);
+  h+='<div class="row pile" style="min-height:1.6rem">'+Array.from({length:8},(_,i)=>el('span','dot d-one',life(s,1,2,i*0.08,0.2+i*0.3))).join('')+'</div>';
+  h+=`<div class="groups"><div class="grp big">${Array.from({length:8},(_,i)=>el('span','dot d-one',life(s,2,null,0.2+i*0.3))).join('')}</div></div>`;
+  if(s===2) h+=pen('8 ÷ 1 = 8','rose','write',2.6);
+  if(s>=3) h+=pen('13 ÷ 1 = ?','rose','fade');
   return h;
  }},
 
-{q:`60 ÷ 2 = ${BOX}`,ans:30,
- hint:"Not quite. Count the tens in one group. 1 ten is 10, 2 tens are 20…",
- say:["60 ÷ 2 means <b>share 60 into 2 equal groups</b>.",
-      "60 is the same as 6 tens.",
-      "Share the tens out one at a time: one for this group, one for that group…",
-      "Your turn! How many tens are in each group? So what is each group worth?"],
+{q:`465 − ${BOX} = 30`,ans:435,special:{495:"That's 465 + 30. The box is a part, not the whole, so take away instead."},
+ hint:"Not quite. Work out 465 − 30: take 3 tens away. The hundreds and ones stay the same.",
+ say:["Start with 465, take something away, and 30 is left. Let's draw it as a bar.",
+      "The whole bar is 465. It's made of two parts: the mystery number and 30.",
+      "To find a missing part, take the part you know away from the whole: 465 − 30.",
+      "Make 465 in a place value chart. 30 is the same as 3 tens, so take 3 of the tens away.",
+      "The hundreds and the ones don't change. Your turn! What's left? That's the missing number."],
  draw(s){
-  let h='<div class="row pile">';
-  if(s===0) h+=pen('60 shared into 2 groups');
-  for(let i=0;i<6;i++) h+=el('span','rod',life(s,1,2,i*0.12,0.3+i*0.45));
-  h+='</div>';
-  if(s>=1) h+=pen('60 = 6 tens','',s===1?'write':'',0.8);
+  let h=bar(s,0,'465',[{t:MQ,f:80},{t:'30',f:20}],1);
+  if(s>=2) h+=pen('465 − 30','',s===2?'write':'',0.2);
+  if(s>=3) h+=pvChart(s,3,{h:4,t:6,o:5},{col:'t',n:3,step:3},s>=4?{h:dg('4',s===4),t:dg(MQ,s===4,.2),o:dg('5',s===4,.4)}:null);
+  return h;
+ }},
+
+{q:`36 ÷ ${BOX} = 9`,ans:4,special:{324:"That's 36 × 9. Share 36 so there are 9 in each group, and count the groups.",27:"That's 36 − 9. Share 36 so there are 9 in each group, and count the groups."},
+ hint:"Not quite. Count the groups of 9 again.",
+ say:["36 shared into some groups gives <b>9 in each group</b>. How many groups do we need?",
+      "Here are 36 counters. Put 9 of them into the first group.",
+      "Keep making groups of 9 until there are no counters left.",
+      "Your turn! How many groups of 9 did we make? That's the missing number."],
+ draw(s){
+  let h='<div class="pile27">'+Array.from({length:36},(_,i)=>el('span','dot d-one',life(s,0,i<9?1:2,i*0.02,0.2+(i%9)*0.08+(i<9?0:Math.floor((i-9)/9)*0.9)))).join('')+'</div>';
   h+='<div class="groups">';
-  for(let g=0;g<2;g++){
-    h+=`<div class="grp big ${s===0?'fade':''}" ${D(g*0.15)}>`;
-    for(let j=0;j<3;j++) h+=el('span','rod',life(s,2,null,0.3+(j*2+g)*0.45));
-    h+='</div>';
+  for(let g=0;g<4;g++){
+    const k=g===0?1:2;
+    if(s>=k){h+=`<div class="grp ${s===k?'pop':''}" ${D(g===0?0:(g-1)*0.9)}>`;for(let j=0;j<9;j++)h+=el('span','dot d-one',life(s,k,null,0.2+j*0.08+(g===0?0:(g-1)*0.9)));h+='</div>';}
   }
   h+='</div>';
-  if(s>=3) h+=pen('each group = ? tens','rose','fade');
-  return h;
+  const notes=['36 counters, 9 in each group','first group of 9','keep going until none are left','how many groups?'];
+  return h+pen(notes[s],s===3?'rose':'','write',s===2?2.8:0.3);
  }},
 
-{q:`${BOX} = ${fr(1,3)} of 27`,ans:9,
- hint:"Not quite. Count the dots in just one group.",
- say:["To find <b>one third</b>, we split something into 3 equal groups and look at just one group. It's the same as 27 ÷ 3.",
-      "Here are 27 counters.",
-      "Deal them out one at a time into 3 groups, just like dealing cards.",
-      "One group is one third. Your turn! How many counters are in one group?"],
- draw(s){
-  let h=s===0?pen('27 shared into 3 equal groups','','write',0.2)
-    :'<div class="pile27">'+Array.from({length:27},(_,i)=>el('span','dot d-one',life(s,1,2,i*0.03,0.2+i*0.12))).join('')+'</div>';
-  h+='<div class="groups">';
-  for(let g=0;g<3;g++){
-    h+=`<div class="grp ${s>=3&&g===0?'pick':''} ${s===0?'fade':''}" ${D(g*0.15)}>`;
-    for(let j=0;j<9;j++) h+=el('span','dot d-one',life(s,2,null,0.2+(j*3+g)*0.12));
-    h+='</div>';
-  }
-  h+='</div>';
-  if(s>=3) h+=pen(`${fr(1,3)} of 27 = ?`,'rose','fade');
-  return h;
- }},
-
-{q:`47 + 85 = ${BOX}`,ans:132,
- hint:"Not quite. Check the tens: 4 + 8 + the 1 you carried. Remember, 10 tens make 1 hundred!",
- say:["Column addition! Line the numbers up: tens under tens, ones under ones.",
-      "Always start with the ones: 7 + 5 = 12.",
-      "12 is 1 ten and 2 ones. Write the 2 in the ones column and carry the 1 over to the tens.",
-      "Now the tens: 4 + 8, plus the 1 you carried.",
-      "Your turn! Add up the tens. If you get 10 or more, the extra hundred goes in the hundreds column. What's the whole answer?"],
- draw(s){
-  const o=s===1||s===2,t=s>=3;
-  let h=colm(4,[CR('','',carry(s,2,'1',0.7,'2.5rem','8.1rem',t),''),R('','',hc('4',t),hc('7',o)),R('+','',hc('8',t),hc('5',o)),'-',R('',QB,QB,wd(s,2,'2',0.1))]);
-  const notes=['','7 + 5 = 12','write 2, carry 1','4 + 8 + 1 = ?','4 + 8 + 1 = ?'];
-  if(notes[s]) h+=pen(notes[s],'rose',s<4?'write':'',0.2);
-  return h;
- }},
-
-{q:`90 − 43 = ${BOX}`,ans:47,
- hint:"Not quite. After the exchange, the ones are 10 − 3 and the tens are 8 − 4.",
+{q:`72 − 26 = ${BOX}`,ans:46,special:{54:"Careful! In the ones, you can't do 6 − 2 instead of 2 − 6. Exchange a ten for 10 ones.",98:"That's adding. This one is a take away."},
+ hint:"Not quite. After the exchange, the ones are 12 − 6 and the tens are 6 − 2.",
  say:["Column subtraction! Line up the numbers: tens under tens, ones under ones. Always start with the ones.",
-      "Ones: 0 − 3. Uh oh! We can't take 3 away from 0. We need to <b>exchange</b>.",
-      "Exchange 1 ten for 10 ones. The 9 tens become 8 tens, and the 0 ones become 10 ones.",
-      "Your turn! Work out 10 − 3 for the ones, then 8 − 4 for the tens. What's the whole answer?"],
+      "Ones: 2 − 6. Uh oh! We can't take 6 away from 2. We need to <b>exchange</b>.",
+      "Exchange 1 ten for 10 ones. The 7 tens become 6 tens, and the 2 ones become 12 ones.",
+      "Your turn! Work out 12 − 6 for the ones, then 6 − 2 for the tens. What's the whole answer?"],
  draw(s){
   const ex=s>=2,a=s===2;
-  const nine={t:'9',c:ex?('strike '+(a?'anim':'')):''};
-  const eight=ex?{t:`<span class="${a?'write':''}" ${a?D(0.5):''}>8</span>`}:'';
-  const zero={t:(ex?`<span class="sup ${a?'hop':''}" style="--d:1.1s;--hx:-2.5rem;--hy:0rem">1</span>`:'')+'0',c:(s===1||s===2)?'on':''};
-  let h=colm(3,[CR('',eight,''),R('',nine,zero),R('−','4',hc('3',s===1)),'-',R('',QB,QB)]);
-  const notes=['','0 − 3? Not enough ones!','1 ten → 10 ones','10 − 3 = ?   8 − 4 = ?'];
+  const seven={t:'7',c:ex?('strike '+(a?'anim':'')):''};
+  const six=ex?{t:`<span class="${a?'write':''}" ${a?D(0.5):''}>6</span>`}:'';
+  const two={t:(ex?`<span class="sup ${a?'hop':''}" style="--d:1.1s;--hx:-2.5rem;--hy:0rem">1</span>`:'')+'2',c:(s===1||s===2)?'on':''};
+  let h=colm(3,[CR('',six,''),R('',seven,two),R('−','2',hc('6',s===1)),'-',R('',QB,QB)]);
+  const notes=['','2 − 6? Not enough ones!','1 ten → 10 ones','12 − 6 = ?   6 − 2 = ?'];
   if(notes[s]) h+=pen(notes[s],'rose',s<3?'write':'',a?1.5:0.2);
   return h;
  }},
 
-{q:`6 × 9 × 5 = ${BOX}`,ans:270,
- hint:"Not quite. 6 × 5 = 30. Then work out 3 × 9 and make it 10 times bigger.",
- special:{243:"Close, but not quite! Try it this way: 6 × 5 = 30, then 3 × 9, then make it 10 times bigger."},
- say:["Three numbers to multiply. Good news: we can multiply them in <b>any order</b>. So let's pick the easiest pair first!",
-      "6 and 5 make a great pair. Swap the 9 and the 5 so they sit together.",
-      "6 × 5 means 6 lots of 5. Count in 5s: 5, 10, 15, 20, 25, 30.",
-      "Now it's 30 × 9. Here's a trick: work out 3 × 9 first, then make it 10 times bigger.",
-      "Your turn! Work out 3 × 9. To make it 10 times bigger, move the digits one place to the left and put a 0 in the ones."],
+{q:`${BOX} = 4 × 8`,ans:32,special:{12:"That's 4 + 8. The × sign means lots of: 4 lots of 8."},
+ hint:"Not quite. Count on 8 more from 24.",
+ say:["The box is on the left, and that's fine: = means <b>is the same as</b>. 4 × 8 means <b>4 rows of 8</b>.",
+      "Row 1: 8 dots.",
+      "Row 2: count on 8 more. That's 16.",
+      "Row 3: count on 8 more. That's 24.",
+      "Row 4: count on 8 more from 24. Your turn! How many dots are there altogether?"],
  draw(s){
-  let h='';
-  if(s===0) h+='<div class="row"><span class="nc">6</span><span class="op">×</span><span class="nc">9</span><span class="op">×</span><span class="nc">5</span></div>';
-  else if(s<=2){
-    h+=`<div class="row"><span class="nc hl ${s===1?'pulse':''}" ${D(1.1)}>6</span><span class="op">×</span><span class="nc hl ${s===1?'swap':''}" style="--from:6rem">5</span><span class="op">×</span><span class="nc ${s===1?'swap':''}" style="--from:-6rem">9</span></div>`;
-    if(s===2){
-      h+='<div class="arr">';
-      for(let r=0;r<6;r++){
-        h+='<div class="arrrow">';
-        for(let c=0;c<5;c++) h+=`<span class="dot pop" ${D(r*0.45+c*0.05)}></span>`;
-        h+=`<span class="arrlbl write" ${D(r*0.45+0.3)}>${(r+1)*5}</span></div>`;
-      }
-      h+='</div>'+pen('6 × 5 = 30','rose','write',3);
-    }
-  } else {
-    h+=`<div class="row"><span class="nc wide ${s===3?'pop':''}">30</span><span class="op">×</span><span class="nc ${s===3?'pop':''}" ${D(.15)}>9</span></div>`;
-    h+=miniX10(s,3);
-  }
-  return h;
+  return rowsOf(s,4,8,r=>r+1,r=>r<3?(r+1)*8:'?')+(s===0?pen('4 rows of 8','','write',0.2):'');
  }},
 
-{q:`48 ÷ 8 = ${BOX}`,ans:6,
- hint:"Not quite. Count the jumps again. Each jump is one 8.",
- say:["48 ÷ 8 asks: <b>how many 8s fit into 48?</b> Let's find out on a number line.",
-      "Start at 0 and jump along 8 at a time. First jump: 8.",
-      "Keep jumping in 8s: 16, 24, 32, 40…",
-      "…and 48! We landed exactly on 48.",
-      "Your turn! Count the jumps. How many 8s make 48?"],
- draw(s){return numberLine(s);}},
-
-{q:`38 × ${BOX} = 0`,ans:0,
- hint:"Not quite. If there's anything on the plates, the total can't be 0.",
- say:["38 lots of a mystery number make <b>0</b>. Let's picture 38 plates.",
-      "What if we put 1 cookie on each plate?",
-      "That would make 38 cookies. Too many! We need 0 altogether, so take them all off.",
-      "Your turn! How many cookies must go on each plate to make 0 altogether? Question 5 might help!"],
+{q:`${fr(3,4)} of 28 = ${BOX}`,ans:21,special:{7:"That's one quarter. Three quarters is 3 of the groups."},
+ hint:"Not quite. One quarter of 28 is 7. Count the counters in 3 of the groups.",
+ say:["To find <b>three quarters</b>: first split into 4 equal groups to find one quarter. Then take <b>3</b> of the groups.",
+      "Here are 28 counters.",
+      "Deal them out one at a time into 4 groups, just like dealing cards. Each group is one quarter.",
+      "We want three quarters, so take 3 of the groups. Your turn! How many counters are in 3 groups altogether?"],
  draw(s){
-  let h='<div class="plates small">';
-  for(let i=0;i<38;i++){
-    const L=life(s,1,2,0.1+i*0.04,i*0.025,'pop','vanish');
-    h+=`<span class="plate ${s===0?'pop':''}" ${D(i*0.02)}>${L?`<span class="cookie ${L.c}" ${sty(L)}></span>`:''}</span>`;
+  let h=s===0?pen('28 shared into 4 equal groups','','write',0.2)
+    :'<div class="pile27">'+Array.from({length:28},(_,i)=>el('span','dot d-one',life(s,1,2,i*0.03,0.2+i*0.09))).join('')+'</div>';
+  h+='<div class="groups">';
+  for(let g=0;g<4;g++){
+    h+=`<div class="grp ${s>=3&&g<3?'pick':''} ${s===0?'fade':''}" ${D(g*0.15)}>`;
+    for(let j=0;j<7;j++) h+=el('span','dot d-one',life(s,2,null,0.2+(j*4+g)*0.09));
+    h+='</div>';
   }
   h+='</div>';
-  return h+pen(['38 plates','38 lots of 1 = 38','we need 0 altogether','38 lots of ? = 0'][s],s===3?'rose':'','write',s===1?1.7:0.3);
- }},
-
-{q:`${BOX} − 16 = 82`,ans:98,
- hint:"Not quite. The missing number is the whole bar, so it must be bigger than 82. Add the two parts: 82 + 16.",
- special:{66:"66 is 82 take away 16. But the missing number is the whole bar, so put the parts together instead: add 82 + 16."},
- say:["Careful with this one! The box is the number we <b>start</b> with. We take 16 away from it and end up with 82.",
-      "Let's draw it. The starting number is the whole bar. We don't know it yet.",
-      "Take 16 away and you're left with 82. So 82 and 16 are the two parts of the whole bar.",
-      "To find the whole, put the parts back together. That means we <b>add</b>: 82 + 16.",
-      "Your turn! Work out 82 + 16. Then check: your answer take away 16 should make 82."],
- draw(s){
-  let h=pen(`start with ${BOX}, take away 16, left with 82`);
-  if(s>=1) h+=bar(s,1,MQ,[{t:'82 left',f:80},{t:'16',f:20,c:'hatch'}],2,s>=3?'glowbox':'');
-  if(s>=3) h+=`<div class="${s===3?'fade':''}" ${D(.5)}>`+colm(3,[R('','8','2'),R('+','1','6'),'-',R('',QB,QB)])+'</div>';
+  if(s>=3) h+=pen(`${fr(3,4)} of 28 = 3 groups = ?`,'rose','fade');
   return h;
  }},
 
-{q:`37 × 2 = ${BOX}`,ans:74,
- hint:"Not quite. In the tens, did you add the 1 you carried?",
- say:["Short multiplication! Multiply each digit by 2. Always start with the ones.",
-      "Ones: 7 × 2 = 14.",
-      "14 is 1 ten and 4 ones. Write the 4 in the ones column and carry the 1 over to the tens.",
-      "Now the tens: 3 × 2, then add the 1 you carried.",
-      "Your turn! Work out the tens. What's the whole answer?"],
+{q:`21 = 21 × ${BOX}`,ans:1,special:{0:"21 × 0 is 0, not 21.",21:"21 × 21 is much bigger than 21!",42:"That's 21 + 21. We need 21 lots of something to make 21."},
+ hint:"Not quite. How many cookies must go on each plate so there are 21 altogether?",
+ say:["21 lots of a mystery number make <b>21</b>. Let's picture 21 plates.",
+      "What if we put 2 cookies on each plate?",
+      "That makes 42 cookies. Too many! We need exactly 21 altogether.",
+      "Your turn! How many cookies must go on each plate to make 21 altogether?"],
+ draw(s){
+  let h='<div class="plates small">';
+  for(let i=0;i<21;i++){
+    const L=life(s,1,3,0.1+i*0.05,i*0.03,'pop','vanish');
+    h+=`<span class="plate ${s===0?'pop':''}" ${D(i*0.03)}>${L?`<span class="cookie ${L.c}" ${sty(L)}></span><span class="cookie ${L.c}" ${sty(L)}></span>`:''}</span>`;
+  }
+  h+='</div>';
+  return h+pen(['21 plates','2 on each plate','21 lots of 2 = 42: too many','21 lots of ? = 21'][s],s>=2?'rose':'','write',s===1?1.3:0.3);
+ }},
+
+{q:`3 × 5 × 4 = ${BOX}`,ans:60,
+ hint:"Not quite. 5 × 4 = 20. Then 3 lots of 20 is 3 lots of 2 tens.",
+ say:["Three numbers to multiply. We can multiply them in <b>any order</b>, so let's pick the easiest pair first!",
+      "5 × 4 is a great pair. That's 4 rows of 5: count in 5s: 5, 10, 15, 20.",
+      "Now it's 3 × 20. 20 is 2 tens, so 3 lots of 20 is 3 lots of 2 tens.",
+      "Your turn! 3 lots of 2 tens is how many tens? What number is that?"],
+ draw(s){
+  let h;
+  if(s===0) return '<div class="row"><span class="nc">3</span><span class="op">×</span><span class="nc">5</span><span class="op">×</span><span class="nc">4</span></div>'+pen('any order!','rose','write',0.4);
+  if(s===1){
+    h='<div class="row"><span class="nc">3</span><span class="op">×</span><span class="nc expr hl">5 × 4</span></div>';
+    return h+rowsOf(1,4,5,()=>1,r=>(r+1)*5)+pen('5 × 4 = 20','rose','write',1);
+  }
+  h=`<div class="row"><span class="nc">3</span><span class="op">×</span><span class="nc wide ${s===2?'pop':''}">20</span></div>`;
+  h+='<div class="groups">';
+  for(let g=0;g<3;g++){h+=`<div class="grp ${s===2?'pop':''}" ${D(g*0.3)}><span class="rod"></span><span class="rod"></span></div>`;}
+  h+='</div>';
+  return h+pen(s===2?'3 lots of 2 tens':'3 × 2 tens = ? tens','rose','write',0.5);
+ }},
+
+{q:`56 ÷ 4 = ${BOX}`,ans:14,
+ hint:"Not quite. How many 4s are in 16? Count in 4s: 4, 8, 12…",
+ say:["Bus stop method! The 4 waits outside the bus stop and 56 goes inside. Work from left to right.",
+      "How many 4s go into 5? One 4 fits, with 1 left over. Write the 1 on top of the 5.",
+      "Carry the 1 that's left over to the next digit. Now the 6 becomes 16.",
+      "Your turn! How many 4s go into 16? Write it on top. What's the whole answer?"],
+ draw(s){
+  let h=busStop(s,{dv:'4',a:'5',b:'6',k0:0,kw:1,kc:2,kfin:3,first:'1',carry:'1'});
+  const notes=['','one 4 in 5, 1 left over','1 and 6 make 16','16 ÷ 4 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose',s<3?'write':'',0.6);
+  return h;
+ }},
+
+{q:`22 × 5 = ${BOX}`,ans:110,special:{27:"That's 22 + 5. The × sign means lots of: 22 lots of 5.",100:"So close! In the tens, did you add the 1 you carried?"},
+ hint:"Not quite. In the tens, work out 2 × 5 and add the 1 you carried.",
+ say:["Short multiplication! Multiply each digit by 5. Always start with the ones.",
+      "Ones: 2 × 5 = 10.",
+      "10 is 1 ten and 0 ones. Write the 0 in the ones column and carry the 1 over to the tens.",
+      "Now the tens: 2 × 5, then add the 1 you carried.",
+      "Your turn! Work out the tens. If it's 10 or more, the extra hundred goes in the hundreds column. What's the whole answer?"],
  draw(s){
   const o=s===1||s===2,t=s>=3;
-  let h=colm(3,[CR('',carry(s,2,'1',0.7,'2.5rem','8.1rem',t),''),R('',hc('3',t),hc('7',o)),R('×','',hc('2',true)),'-',R('',QB,wd(s,2,'4',0.1))]);
-  const notes=['','7 × 2 = 14','write 4, carry 1','3 × 2 + 1 = ?','3 × 2 + 1 = ?'];
+  let h=colm(4,[CR('','',carry(s,2,'1',0.7,'2.5rem','8.1rem',t),''),R('','',hc('2',t),hc('2',o)),R('×','','',hc('5',true)),'-',R('',QB,QB,wd(s,2,'0',0.1))]);
+  const notes=['','2 × 5 = 10','write 0, carry 1','2 × 5 + 1 = ?','2 × 5 + 1 = ?'];
   if(notes[s]) h+=pen(notes[s],'rose',s<4?'write':'',0.2);
   return h;
  }},
 
-{q:`64 ÷ 4 = ${BOX}`,ans:16,
- hint:"Not quite. How many 4s are in 24? Count in 4s: 4, 8, 12…",
- say:["Bus stop method! The 4 waits outside the bus stop and 64 goes inside. Work from left to right.",
-      "How many 4s go into 6? One 4 fits, with 2 left over. Write the 1 on top of the 6.",
-      "Carry the 2 that's left over to the next digit. Now the 4 becomes 24.",
-      "Your turn! How many 4s go into 24? Write it on top. What's the whole answer?"],
+{q:`73 + 87 = ${BOX}`,ans:160,special:{150:"So close! In the tens, did you add the 1 you carried?"},
+ hint:"Not quite. Check the tens: 7 + 8 + the 1 you carried. Remember, 10 tens make 1 hundred!",
+ say:["Column addition! Line the numbers up: tens under tens, ones under ones.",
+      "Always start with the ones: 3 + 7 = 10.",
+      "10 is 1 ten and 0 ones. Write the 0 in the ones column and carry the 1 over to the tens.",
+      "Now the tens: 7 + 8, plus the 1 you carried.",
+      "Your turn! Add up the tens. If you get 10 or more, the extra hundred goes in the hundreds column. What's the whole answer?"],
  draw(s){
-  let h=busStop(s,{dv:'4',a:'6',b:'4',k0:0,kw:1,kc:2,kfin:3,first:'1',carry:'2'});
-  const notes=['','one 4 in 6, 2 left over','2 and 4 make 24','24 ÷ 4 = ?'];
+  const o=s===1||s===2,t=s>=3;
+  let h=colm(4,[CR('','',carry(s,2,'1',0.7,'2.5rem','8.1rem',t),''),R('','',hc('7',t),hc('3',o)),R('+','',hc('8',t),hc('7',o)),'-',R('',QB,QB,wd(s,2,'0',0.1))]);
+  const notes=['','3 + 7 = 10','write 0, carry 1','7 + 8 + 1 = ?','7 + 8 + 1 = ?'];
+  if(notes[s]) h+=pen(notes[s],'rose',s<4?'write':'',0.2);
+  return h;
+ }},
+
+{q:`${BOX} − 24 = 59`,ans:83,special:{35:"35 is 59 take away 24. But the missing number is the whole bar, so put the parts together instead: add 59 + 24."},
+ hint:"Not quite. The missing number is the whole bar, so it must be bigger than 59. Add the two parts: 59 + 24.",
+ say:["Careful with this one! The box is the number we <b>start</b> with. We take 24 away from it and end up with 59.",
+      "Let's draw it. The starting number is the whole bar. We don't know it yet.",
+      "Take 24 away and you're left with 59. So 59 and 24 are the two parts of the whole bar.",
+      "To find the whole, put the parts back together. That means we <b>add</b>: 59 + 24.",
+      "Your turn! Work out 59 + 24. Watch out: 9 + 4 is more than 10, so you'll need to carry. Then check: your answer take away 24 should make 59."],
+ draw(s){
+  let h=pen(`start with ${BOX}, take away 24, left with 59`);
+  if(s>=1) h+=bar(s,1,MQ,[{t:'59 left',f:70},{t:'24',f:30,c:'hatch'}],2,s>=3?'glowbox':'');
+  if(s>=3) h+=`<div class="${s===3?'fade':''}" ${D(.5)}>`+colm(3,[R('','5','9'),R('+','2','4'),'-',R('',QB,QB)])+'</div>';
+  return h;
+ }},
+
+{q:`2 × ${BOX} = 92`,ans:46,special:{184:"That's 92 × 2. Something × 2 makes 92, so divide instead.",90:"That's 92 − 2. Something × 2 makes 92, so divide instead.",94:"That's 92 + 2. Something × 2 makes 92, so divide instead."},
+ hint:"Not quite. How many 2s are in 12? Then put it together with the 4.",
+ say:["2 lots of a mystery number make 92. Let's draw it: <b>2 equal parts</b> make 92 altogether.",
+      "To find one part, do the opposite of multiplying. <b>Divide</b>: 92 ÷ 2. Let's use the bus stop.",
+      "How many 2s go into 9? Four, with 1 left over. Write the 4 on top and carry the 1.",
+      "Your turn! The 2 becomes 12. How many 2s go into 12? What's the whole answer?"],
+ draw(s){
+  let h=bar(s,0,'92',[{t:MQ,f:1},{t:MQ,f:1}],0);
+  if(s>=1) h+=busStop(s,{dv:'2',a:'9',b:'2',k0:1,kw:2,kc:2,kfin:3,first:'4',carry:'1'});
+  const notes=['','92 ÷ 2','four 2s in 9, 1 left over','12 ÷ 2 = ?'];
   if(notes[s]) h+=pen(notes[s],'rose',s<3?'write':'',0.6);
   return h;
  }},
 
-{q:`11 × 12 = ${BOX}`,ans:132,
- hint:"Not quite. 10 rows of 12 make 120. Then add one more row of 12.",
- special:{121:"Close! 121 is 11 × 11. We need 11 × 12, so try 120 + 12."},
- say:["11 × 12 means <b>11 rows of 12</b>. That's a lot of dots! Let's split it into 10 rows and 1 more row.",
-      "10 rows of 12 is 10 × 12. That's 120.",
-      "Now add 1 more row of 12. That's 12 more.",
-      "Your turn! What is 120 + 12?"],
+{q:`${BOX} ÷ 3 = 36`,ans:108,special:{12:"That's 36 ÷ 3. The box is the number you start with, so multiply instead.",39:"That's 36 + 3. The whole is 3 lots of 36, so multiply.",33:"That's 36 − 3. The whole is 3 lots of 36, so multiply."},
+ hint:"Not quite. The answer must be bigger than 36. In the tens: 3 × 3, then add the 1 you carried.",
+ say:["The box is the number we <b>start</b> with. We share it into 3 equal groups and get 36 in each group.",
+      "Let's draw it: the whole bar is split into 3 equal parts, and each part is 36.",
+      "To find the whole, do the opposite of sharing. <b>Multiply</b>: 3 lots of 36 is 36 × 3.",
+      "Short multiplication. Ones: 6 × 3 = 18. Write the 8 and carry the 1.",
+      "Your turn! Tens: 3 × 3, then add the 1 you carried. What's the whole answer?"],
  draw(s){
-  let h='<div class="arr sm">';
-  for(let r=0;r<11;r++){
-    const k=r<10?1:2;
-    h+='<div class="arrrow">';
-    for(let c=0;c<12;c++){const L=life(s,k,null,r<10?r*0.12+c*0.015:c*0.06);h+=L?`<span class="dot ${r===10?'d-rose':''} ${L.c}" ${sty(L)}></span>`:'<span class="dot d-ghost"></span>';}
-    h+='</div>';
-  }
-  h+='</div>';
-  if(s>=1) h+=pen('blue: 10 × 12 = 120','',s===1?'write':'',1.4);
-  if(s>=2) h+=pen('pink: 1 × 12 = 12','rose',s===2?'write':'',0.8);
-  if(s>=3) h+=pen('120 + 12 = ?','rose','fade');
-  return h;
- }},
-
-{q:`${BOX} ÷ 3 = 75`,ans:225,
- hint:"Not quite. The answer must be bigger than 75. In the tens: 7 × 3, then add the 1 you carried.",
- say:["The box is the number we <b>start</b> with. We share it into 3 equal groups and get 75 in each group.",
-      "Let's draw it: the whole bar is split into 3 equal parts, and each part is 75.",
-      "To find the whole, do the opposite of sharing. <b>Multiply</b>: 3 lots of 75 is 75 × 3.",
-      "Short multiplication. Ones: 5 × 3 = 15. Write the 5 and carry the 1.",
-      "Your turn! Tens: 7 × 3, then add the 1 you carried. What's the whole answer?"],
- draw(s){
-  let h=pen(`${BOX} shared into 3 groups, 75 in each`);
-  if(s>=1) h+=bar(s,1,MQ,[{t:'75',f:1},{t:'75',f:1},{t:'75',f:1}],1);
-  if(s===2) h+=pen('3 lots of 75 = 75 × 3','rose','write',0.3);
-  if(s>=3) h+=`<div class="${s===3?'fade':''}">`+colm(4,[CR('','',carry(s,3,'1',1.2,'2.5rem','8.1rem',s>=4),''),R('','',hc('7',s>=4),hc('5',s===3)),R('×','','',hc('3',true)),'-',R('',QB,QB,wd(s,3,'5',0.7))])+'</div>';
-  if(s===3) h+=pen('5 × 3 = 15','rose','write',0.4);
-  if(s>=4) h+=pen('7 × 3 + 1 = ?','rose','fade');
-  return h;
- }},
-
-{q:`${BOX} × 5 = 85`,ans:17,
- hint:"Not quite. How many 5s are in 35? Count in 5s: 5, 10, 15…",
- say:["Something times 5 makes 85. Let's draw it: <b>5 equal parts</b> make 85 altogether.",
-      "To find one part, do the opposite of multiplying. <b>Divide</b>: 85 ÷ 5. Let's use the bus stop.",
-      "How many 5s go into 8? One, with 3 left over. Write the 1 on top and carry the 3.",
-      "Your turn! How many 5s go into 35? Count in 5s if you need to. What's the whole answer?"],
- draw(s){
-  let h=bar(s,0,'85',[0,1,2,3,4].map(()=>({t:MQ,f:1})),0);
-  if(s>=1) h+=busStop(s,{dv:'5',a:'8',b:'5',k0:1,kw:2,kc:2,kfin:3,first:'1',carry:'3'});
-  const notes=['','85 ÷ 5','one 5 in 8, 3 left over','35 ÷ 5 = ?'];
-  if(notes[s]) h+=pen(notes[s],'rose',s<3?'write':'',0.6);
+  let h=pen(`${BOX} shared into 3 groups, 36 in each`);
+  if(s>=1) h+=bar(s,1,MQ,[{t:'36',f:1},{t:'36',f:1},{t:'36',f:1}],1);
+  if(s===2) h+=pen('3 lots of 36 = 36 × 3','rose','write',0.3);
+  if(s>=3) h+=`<div class="${s===3?'fade':''}">`+colm(4,[CR('','',carry(s,3,'1',1.2,'2.5rem','8.1rem',s>=4),''),R('','',hc('3',s>=4),hc('6',s===3)),R('×','','',hc('3',true)),'-',R('',QB,QB,wd(s,3,'8',0.7))])+'</div>';
+  if(s===3) h+=pen('6 × 3 = 18','rose','write',0.4);
+  if(s>=4) h+=pen('3 × 3 + 1 = ?','rose','fade');
   return h;
  }}
 ];
@@ -1656,40 +1638,85 @@ const Q=[
 ];
 
 
+/* ---------- part 2: adding and taking away fractions (questions 27–39) ---------- */
+const NAMES={2:'halves',3:'thirds',4:'quarters',5:'fifths',6:'sixths',8:'eighths',10:'tenths',12:'twelfths',24:'twenty-fourths'};
+const gcdF=(x,y)=>y?gcdF(y,x%y):x;
+function fracQ(a,b,c,d,op){
+  const L=b*d/gcdF(b,d),m1=L/b,m2=L/d,sign=op==='+'?'+':'−',doing=op==='+'?'add':'take away';
+  const top=op==='+'?a*m1+c*m2:a*m1-c*m2;
+  const fin=op==='+'?"Then simplify if you can. If it's bigger than 1, you can write it as a mixed number too.":'Then simplify if you can.';
+  const sum=`${fr(a,b)} ${sign} ${fr(c,d)}`;
+  const o={q:`${sum} = ${BOX}`,ans:[top,L],frac:true,
+    hint:`Not quite. Change ${m1===1||m2===1?'the other fraction':'both fractions'} into ${NAMES[L]} first, then ${doing} the top numbers. The bottom stays ${L}.`};
+  if(m1===1||m2===1){
+    const first=m2===1,n=first?a:c,dd=first?b:d,m=first?m1:m2;
+    o.say=[`The denominators are different: ${NAMES[b]} and ${NAMES[d]}. We can only ${doing} fractions when the pieces are the <b>same size</b>. ${L} is ${dd} × ${m}, so change ${fr(n,dd)} into ${NAMES[L]}.`,
+      `Here's ${fr(n,dd)}: a bar cut into ${dd} equal pieces, with ${n} shaded.`,
+      `Cut every piece into ${m} smaller pieces. Now the bar is in ${NAMES[L]}. That's the same as multiplying the top and the bottom by ${m}.`,
+      `Your turn! Count the shaded ${NAMES[L]}. Then ${doing} the top numbers: the bottom stays ${L}. ${fin}`];
+    o.draw=s=>{
+      const h=splitBar(s,{n:dd,m,shade:n,k0:0,kShade:1,kSplit:2});
+      const eq=first?`${fr('?',L)} ${sign} ${fr(c,d)} = ${fr('?',L)}`:`${fr(a,b)} ${sign} ${fr('?',L)} = ${fr('?',L)}`;
+      const labs=[sum,`${fr(n,dd)} shaded`,`${fr(n,dd)} = ${fr('?',L)}`,eq];
+      return h+pen(labs[s],s>=2?'rose':'','write',s===2?1.4:.3);
+    };
+  } else {
+    o.say=[`Neither denominator goes into the other, so find a number that <b>both</b> ${b} and ${d} go into. List their multiples: the first number in both lists is ${L}. So change both fractions into ${NAMES[L]}.`,
+      `${L} is ${b} × ${m1}. So cut each piece of ${fr(a,b)} into ${m1}. That's multiplying the top and the bottom by ${m1}.`,
+      `${L} is ${d} × ${m2}. So cut each piece of ${fr(c,d)} into ${m2}. That's multiplying the top and the bottom by ${m2}.`,
+      `Your turn! Count the shaded ${NAMES[L]} in each bar, then ${doing} the top numbers. The bottom stays ${L}. ${fin}`];
+    o.draw=s=>{
+      if(s===0){
+        const list=n=>{let t=[];for(let k=n;k<=L;k+=n)t.push(k===L?`<span class="rose">${k}</span>`:k);return t.join(', ');};
+        return pen(sum)+pen(`${b}: ${list(b)}`,'','write',.3)+pen(`${d}: ${list(d)}`,'','write',.9);
+      }
+      let h=splitBar(s,{n:b,m:m1,shade:a,k0:1,kShade:1,kSplit:1})+pen(`${fr(a,b)} = ${fr('?',L)}`,'rose',s===1?'write':'',1.2);
+      if(s>=2) h+=splitBar(s,{n:d,m:m2,shade:c,k0:2,kShade:2,kSplit:2})+pen(`${fr(c,d)} = ${fr('?',L)}`,'rose',s===2?'write':'',1.2);
+      if(s>=3) h+=pen(`${fr('?',L)} ${sign} ${fr('?',L)} = ${fr('?',L)}`,'rose','fade');
+      return h;
+    };
+  }
+  return o;
+}
+[[4,5,7,10,'+'],[1,2,3,8,'-'],[1,2,3,10,'-'],[4,5,1,2,'+'],[7,12,3,4,'+'],[5,8,1,4,'-'],[7,10,3,5,'-'],
+ [2,3,3,4,'+'],[1,2,3,5,'+'],[5,8,7,12,'+'],[1,2,1,3,'-'],[7,8,3,4,'-'],[11,12,1,4,'-']].forEach(x=>Q.push(fracQ(...x)));
+
 return Q;
 })();
 
-const SPELL4={focus:'inter',words:[
-  {w:'interact',m:'to talk to, play with or work with other people or things.',s:'At the farm, we could ______ with the baby goats.'},
-  {w:'intercity',m:'going between cities.',s:'We took the fast ______ train to visit Grandma in another city.'},
-  {w:'international',m:'between or involving different countries.',s:'England played France in an ______ football match.'},
-  {w:'interfere',m:'to get involved in something when you should not, or to get in the way.',s:'Please don\'t ______ with your brother\'s game.'},
-  {w:'interview',m:'a meeting where one person asks another person questions.',s:'The reporter did an ______ with the famous author.'},
-  {w:'intercept',m:'to stop or catch something on its way to somewhere else.',s:'The defender jumped up to ______ the pass.'},
-  {w:'intercom',m:'a speaker system for talking to people in another room.',s:'The head teacher spoke to every class over the ______.'},
-  {w:'internet',m:'the huge network that joins up computers all around the world.',s:'We used the ______ to find facts about volcanoes.'},
-  {w:'interchange',m:'a place where roads, buses or trains meet, so you can swap from one to another.',s:'We changed buses at the busy ______ in town.'},
-  {w:'interface',m:'the screen, buttons and menus you use to control a computer or machine.',s:'The new game has a simple ______ that is easy to use.'}
+const SPELL4={focus:'',words:[
+  {w:'pressure',m:'pushing or pressing hard on something.',s:'Press down with firm ______ to stick the two pieces together.'},
+  {w:'ordinary',m:'normal; not special or different.',s:'It was just an ______ Tuesday until the snow started.'},
+  {w:'increase',m:'to get bigger or more.',s:'Please ______ the volume so everyone can hear.'},
+  {w:'material',m:'what something is made of, such as wood, metal or cloth.',s:'Wool is a soft, warm ______ for making jumpers.'},
+  {w:'heart',m:'the part of your body that pumps blood all the way round it.',s:'My ______ beats really fast after a race.'},
+  {w:'island',m:'a piece of land with water all the way round it.',s:'We rowed out to a tiny ______ in the middle of the lake.'},
+  {w:'recent',m:'happening not long ago.',s:'Our class photo is very ______. It was taken last week.'},
+  {w:'thought',m:'an idea in your mind. It is also the past of think.',s:'I ______ it might rain, so I took my coat.'},
+  {w:'sentence',m:'a group of words that makes complete sense. It starts with a capital letter and ends with a full stop.',s:'Write a ______ about your favourite animal.'},
+  {w:'although',m:'even though.',s:'We played outside, ______ it was very cold.'}
 ]};
-const SPELL6={focus:'tial',words:[
-  {w:'influential',m:'having a big effect on what people think or do.',s:'The ______ scientist changed the way people thought about space.'},
-  {w:'martial',m:'to do with fighting or war.',s:'Karate and judo are both ______ arts.'},
-  {w:'spatial',m:'to do with space, and where things are compared to each other.',s:'Building models helps you develop good ______ skills.'},
-  {w:'partial',m:'only part of something, not the whole thing.',s:'During the ______ eclipse, the moon covered just a slice of the sun.'},
-  {w:'confidential',m:'secret, and meant to be kept private.',s:'The letter was marked ______, so only the head teacher could open it.'},
-  {w:'essential',m:'absolutely necessary; you cannot do without it.',s:'Water is ______ for every living thing.'},
-  {w:'substantial',m:'large in size, amount or importance.',s:'We ate a ______ breakfast before the long walk.'},
-  {w:'potential',m:'the ability to develop into something in the future.',s:'Her coach says she has the ______ to become a champion.'},
-  {w:'sequential',m:'following one after another in a set order.',s:'The pages are numbered in ______ order.'},
-  {w:'torrential',m:'pouring down fast and heavily, used about rain.',s:'______ rain flooded the playground.'}
+const SPELL6={focus:'',words:[
+  {w:'amateur',m:'someone who does something for fun, not as their job.',s:'The race was open to every ______ runner in town.'},
+  {w:'category',m:'a group of things that are alike in some way.',s:'Sort each animal into the right ______: mammal, bird or fish.'},
+  {w:'correspond',m:'to match or go together. It can also mean to write letters to someone.',s:'The numbers on the map ______ to the numbers in the key.'},
+  {w:'environment',m:'the world around us: the land, air, water, plants and animals.',s:'Picking up litter helps to protect the ______.'},
+  {w:'frequently',m:'often; many times.',s:'The buses run ______, so we never wait long.'},
+  {w:'language',m:'the words people use to speak and write, such as English or French.',s:'She is learning to speak a new ______.'},
+  {w:'occur',m:'to happen.',s:'Earthquakes ______ when parts of the Earth\'s crust move suddenly.'},
+  {w:'queue',m:'a line of people waiting for their turn.',s:'We stood in a long ______ for the rollercoaster.'},
+  {w:'signature',m:'your name written in your own special way.',s:'The author wrote her ______ inside my book.'},
+  {w:'twelfth',m:'number 12 in order.',s:'December is the ______ month of the year.'}
 ]};
 const TOPICS4=[
-  ['Adding and taking away in your head',[1,4,7]],
-  ['Times tables',[2,3,5,8,12,13,14,18]],
-  ['Fractions',[6,9]],
-  ['Missing numbers',[2,4,7,14,15,19,20]],
-  ['Column adding and taking away',[10,11]],
-  ['Short multiplication and division',[16,17,19,20]]
+  ['× 0, × 1 and ÷ 1',[4,7,13]],
+  ['Times tables and the 11 times table',[1,2,5,11]],
+  ['Multiplying three numbers',[14]],
+  ['Adding and taking away',[3,8,10,17]],
+  ['Fractions',[6,12]],
+  ['Missing numbers',[1,8,9,11,13,18,19,20]],
+  ['Short multiplication',[16,20]],
+  ['Short division (bus stop)',[15,19]]
 ];
 const TOPICS6=[
   ['Squares and mental maths',[2,6,11]],
@@ -1699,15 +1726,16 @@ const TOPICS6=[
   ['Column adding and taking away',[18,22,24]],
   ['Taking away across zeros',[19]],
   ['Short multiplication and division',[5,7,8,10,23]],
-  ['Long multiplication and division',[17,21,25,26]]
+  ['Long multiplication and division',[17,21,25,26]],
+  ['Adding and taking away fractions',[27,28,29,30,31,32,33,34,35,36,37,38,39]]
 ];
 
 /* ---------- app ---------- */
 const YEARS={
-  y4:{label:'Year 4',app:'y4',frac:'stack',speech:true,Q:Q4,SPELL:SPELL4,TOPICS:TOPICS4,
-      spTitle:'Stage 4 · List 5',spRule:'Words that start with <b>‘inter’</b>, which means <i>between</i> or <i>among</i>, like <mark class="fx">inter</mark>national.'},
+  y4:{label:'Year 4',app:'y4',wk:'autumn-test-6',frac:'stack',speech:true,Q:Q4,SPELL:SPELL4,TOPICS:TOPICS4,
+      spTitle:'Stage 4 · Test 1',spRule:'Tricky words to learn by heart. Watch out for the sneaky letters, like the silent <b>s</b> in i<b>s</b>land and the <b>ough</b> in th<b>ough</b>t and alth<b>ough</b>.'},
   y6:{label:'Year 6',app:'y6',wk:'autumn-test-6',frac:'text',speech:false,Q:Q6,SPELL:SPELL6,TOPICS:TOPICS6,
-      spTitle:'Stage 6 · List 5',spRule:'Words with <b>‘tial’</b>, which says /shul/, like essen<mark class="fx">tial</mark>.'}
+      spTitle:'Stage 6 · List 6',spRule:'Challenge words. Watch out for the tricky bits, like the <b>ue</b> in q<b>ueue</b>, the double <b>r</b> in co<b>rr</b>espond and the <b>f</b> in twel<b>f</b>th.'}
 };
 let YEAR=null,APP='y6',FRAC='text',SPEECH=false,Q=Q6,SPELL=SPELL6,TOPICS=TOPICS6;
 /* carry over progress saved by the two separate helpers (same website, older storage names) */
@@ -2012,11 +2040,15 @@ $('toResults').addEventListener('click',showResults);
 
 /* ---- spellings ---- */
 let SPKEY='y6-spell',SPS={run:null,last:null};
-function loadSPS(){SPKEY=APP+'-spell';SPS={run:null,last:null};try{SPS=JSON.parse(localStorage.getItem(SPKEY)||'null')||{run:null,last:null};}catch(e){}}
+function loadSPS(){
+  SPKEY=APP+'-spell';SPS={run:null,last:null};try{SPS=JSON.parse(localStorage.getItem(SPKEY)||'null')||{run:null,last:null};}catch(e){}
+  /* a new spelling list: forget the old list's test in progress and results */
+  const t=(YEARS[YEAR]||{}).spTitle;if(t&&SPS.list!==t){SPS={run:null,last:null,list:t};spSave();}
+}
 function spSave(){try{localStorage.setItem(SPKEY,JSON.stringify(SPS));}catch(e){}}
 const SPSECTIONS=['pick','home','lesson','results','spellTest','spellResults'];
 function spShow(id){SPSECTIONS.forEach(s=>{$(s).hidden=s!==id;});window.scrollTo(0,0);}
-const fx=w=>w.replace(SPELL.focus,`<mark class="fx">${SPELL.focus}</mark>`);
+const fx=w=>SPELL.focus?w.replace(SPELL.focus,`<mark class="fx">${SPELL.focus}</mark>`):w;
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 
 /* tabs on the home screen */

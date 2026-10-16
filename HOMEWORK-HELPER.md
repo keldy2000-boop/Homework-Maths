@@ -60,7 +60,8 @@ There is also a one-off migration from older storage names, so keep it.
 
 - **A maths question:** add an object to `Q4` or `Q6`, and add its number to the right entries in `TOPICS4` or `TOPICS6`.
 - **A whole new week of maths:** replace `Q4` or `Q6` and its `TOPICS`, then change that year's `wk` in `YEARS` (add one if it has none). When the year is next opened, each device clears the old answers and working out for that year only (saved as `y4-wk` / `y6-wk`). Also update the question count on the front-page year button.
-- **A new spelling list:** replace the words in `SPELL4` or `SPELL6`, and update `spTitle` and `spRule` for that year in `YEARS`.
+- **A new spelling list:** replace the words in `SPELL4` or `SPELL6`, and update `spTitle` and `spRule` for that year in `YEARS`. Changing `spTitle` clears that year's saved spelling test on each device. If the words don't share a letter pattern, set `focus:''`.
+- **A second set of maths in the same week:** add the new questions to the end of `Q4` or `Q6` (and to `TOPICS`), and leave `wk` unchanged so earlier answers are kept.
 - **A front-page test question:** add an object to `TESTS`.
 
 ## Checking changes

@@ -428,6 +428,11 @@ mark.fx{background:var(--hl-bg);color:var(--rose);border-radius:4px;padding:0 .0
 @keyframes shrinkX{from{transform:scaleX(2.4)}to{transform:none}}
 .tlabel{font-family:var(--pen);font-size:1.25rem;color:var(--rose)}
 .opts.wide{grid-template-columns:1fr}
+.agrid{display:grid;border:2px solid var(--ink);background:var(--card)}
+.agrid i{border:1px solid var(--line)}
+.agrid i.a{background:var(--mb);background:color-mix(in srgb,var(--ten) 38%,transparent)}
+.agrid i.c{background:rgba(214,60,114,.28);background:color-mix(in srgb,var(--rose) 40%,transparent)}
+.agrid i.ac{background:var(--hun)}
 .method{margin:.6rem 0;padding:.6rem .8rem;border:2px dashed var(--line);border-radius:10px;font-weight:400;font-size:1.05rem;line-height:1.5}
 .clues{text-align:left;font-weight:400;font-size:1.05rem;line-height:1.5;margin:.5rem 0 0 1.2rem;padding:0}
 .nchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:20rem}
@@ -458,7 +463,7 @@ mark.fx{background:var(--hl-bg);color:var(--rose);border-radius:4px;padding:0 .0
     <p class="intro">Which year are you in?</p>
     <div class="yearbtns">
       <button class="yearbtn" data-y="y4"><b>Year 4</b><span>20 maths questions and spellings</span></button>
-      <button class="yearbtn" data-y="y6"><b>Year 6</b><span>28 maths questions and spellings</span></button>
+      <button class="yearbtn" data-y="y6"><b>Year 6</b><span>36 maths questions and spellings</span></button>
     </div>
     <h2 class="sect">Test</h2>
     <div id="tests"></div>
@@ -1631,6 +1636,33 @@ fracQ(4,5,2,10,'+'),
  }}
 ];
 
+/* ---------- part 2: multiplying fractions (questions 29–36) ---------- */
+// area model: b columns × d rows; the first a columns shaded from step 1, the first c rows from step 2
+function areaGrid(s,a,b,c,d){
+  const cell=Math.min(1.7,15/b,11/d).toFixed(2);
+  let h=`<div class="agrid ${s===1?'fade':''}" style="grid-template-columns:repeat(${b},${cell}rem);grid-auto-rows:${cell}rem">`;
+  for(let r=0;r<d;r++)for(let k=0;k<b;k++){
+    const A=s>=1&&k<a,C=s>=2&&r<c;
+    h+=`<i class="${A&&C?'ac':A?'a':C?'c':''} ${s===2&&C?'pop':''}" ${s===2&&C?D(0.2+r*0.15):''}></i>`;
+  }
+  return h+'</div>';
+}
+function mulQ(a,b,c,d){
+  const fA=fr(a,b),fC=fr(c,d);
+  return {q:`${fA} × ${fC} = ${BOX}`,ans:[a*c,b*d],frac:true,
+    special:{},
+    hint:`Not quite. Multiply the tops (${a} × ${c}) and multiply the bottoms (${b} × ${d}). Then simplify if you can.`,
+    say:[`To multiply fractions: <b>multiply the tops</b>, and <b>multiply the bottoms</b>. Let's see why with a picture. ${fA} × ${fC} means ${fA} <b>of</b> ${fC}.`,
+         `Draw a rectangle cut into ${b} columns. Shade ${a} of them blue: that's ${fA}.`,
+         `Now cut it into ${d} rows too, and shade ${c} of the rows pink: that's ${fC}. Where the colours overlap (purple) is ${fA} of ${fC}.`,
+         `Your turn! The purple pieces are ${a} × ${c}, and all the pieces are ${b} × ${d}. Write it as a fraction, then simplify: can the top and bottom both be divided by the same number?`],
+    draw(s){
+      if(s===0) return pen(`${fA} × ${fC}`)+pen(`top × top, bottom × bottom`,'rose','write',.4);
+      return areaGrid(s,a,b,c,d)+pen(['',`${fA}: ${a} of ${b} columns`,`purple = ${fA} of ${fC}`,`${fr(`${a} × ${c}`,`${b} × ${d}`)} = ${fr('?','?')}, then simplify`][s],'rose','write',s===2?1:.3);
+    }};
+}
+[[2,5,1,2],[3,4,1,12],[3,4,2,9],[5,16,4,5],[4,9,3,8],[5,12,4,5],[1,3,9,10],[2,5,3,4]].forEach(x=>Q.push(mulQ(...x)));
+
 return Q;
 })();
 
@@ -1647,16 +1679,16 @@ const SPELL4={focus:'',words:[
   {w:'women',m:'more than one woman.',s:'Two ______ were walking their dogs in the park.'}
 ]};
 const SPELL6={focus:'',words:[
-  {w:'amateur',m:'someone who does something for fun, not as their job.',s:'The race was open to every ______ runner in town.'},
-  {w:'category',m:'a group of things that are alike in some way.',s:'Sort each animal into the right ______: mammal, bird or fish.'},
-  {w:'correspond',m:'to match or go together. It can also mean to write letters to someone.',s:'The numbers on the map ______ to the numbers in the key.'},
-  {w:'environment',m:'the world around us: the land, air, water, plants and animals.',s:'Picking up litter helps to protect the ______.'},
-  {w:'frequently',m:'often; many times.',s:'The buses run ______, so we never wait long.'},
-  {w:'language',m:'the words people use to speak and write, such as English or French.',s:'She is learning to speak a new ______.'},
-  {w:'occur',m:'to happen.',s:'Earthquakes ______ when parts of the Earth\'s crust move suddenly.'},
-  {w:'queue',m:'a line of people waiting for their turn.',s:'We stood in a long ______ for the rollercoaster.'},
-  {w:'signature',m:'your name written in your own special way.',s:'The author wrote her ______ inside my book.'},
-  {w:'twelfth',m:'number 12 in order.',s:'December is the ______ month of the year.'}
+  {w:'appreciate',m:'to be thankful for something, or to understand how good it is.',s:'I really ______ your help with my project.'},
+  {w:'communicate',m:'to share information or ideas with someone.',s:'Dolphins ______ with each other using clicks and whistles.'},
+  {w:'definite',m:'certain and clear; sure.',s:'We don\'t have a ______ date for the school trip yet.'},
+  {w:'exaggerate',m:'to make something sound bigger, better or worse than it really is.',s:'Don\'t ______: the fish wasn\'t as big as a car!'},
+  {w:'harass',m:'to keep bothering or upsetting someone or something.',s:'Please don\'t ______ the ducks by chasing them.'},
+  {w:'marvellous',m:'wonderful; amazing.',s:'We had a ______ time at the seaside.'},
+  {w:'persuade',m:'to get someone to agree with you or do something by giving good reasons.',s:'I tried to ______ my parents to let us have a puppy.'},
+  {w:'relevant',m:'connected to what is being talked about or written about.',s:'Only include facts that are ______ to your topic.'},
+  {w:'stomach',m:'the part of your body where food goes after you swallow it.',s:'My ______ rumbled loudly before lunch.'},
+  {w:'vehicle',m:'something used to carry people or things, like a car, bus or lorry.',s:'A fire engine is an emergency ______.'}
 ]};
 const TOPICS4=[
   ['Adding and taking away in your head',[1,2,3,5]],
@@ -1677,7 +1709,8 @@ const TOPICS6=[
   ['Missing numbers',[1,4,8,10,12,14,16,19,22,24,25,27]],
   ['Column adding and taking away',[19,24,26,27]],
   ['Short multiplication and division',[18,20,22,23,25]],
-  ['Long multiplication',[21,28]]
+  ['Long multiplication',[21,28]],
+  ['Multiplying fractions',[29,30,31,32,33,34,35,36]]
 ];
 
 /* ---------- app ---------- */
@@ -1685,7 +1718,7 @@ const YEARS={
   y4:{label:'Year 4',app:'y4',wk:'autumn-test-8',frac:'stack',speech:true,Q:Q4,SPELL:SPELL4,TOPICS:TOPICS4,
       spTitle:'Stage 4 · Test 3',spRule:'Tricky words to learn by heart. Watch out for the sneaky letters, like the double <b>mm</b> in gra<b>mm</b>ar, the <b>ie</b> in bel<b>ie</b>ve and the <b>o</b> that sounds like <i>i</i> in w<b>o</b>men.'},
   y6:{label:'Year 6',app:'y6',wk:'autumn-test-8',frac:'text',speech:false,Q:Q6,SPELL:SPELL6,TOPICS:TOPICS6,
-      spTitle:'Stage 6 · List 6',spRule:'Challenge words. Watch out for the tricky bits, like the <b>ue</b> in q<b>ueue</b>, the double <b>r</b> in co<b>rr</b>espond and the <b>f</b> in twel<b>f</b>th.'}
+      spTitle:'Stage 6 · List 7',spRule:'Challenge words. Watch out for the double letters, like a<b>pp</b>reciate, co<b>mm</b>unicate, exa<b>gg</b>erate, hara<b>ss</b> and marve<b>ll</b>ous, and the sneaky <b>h</b> in ve<b>h</b>icle and stoma<b>ch</b>.'}
 };
 let YEAR=null,APP='y6',FRAC='text',SPEECH=false,Q=Q6,SPELL=SPELL6,TOPICS=TOPICS6;
 /* carry over progress saved by the two separate helpers (same website, older storage names) */

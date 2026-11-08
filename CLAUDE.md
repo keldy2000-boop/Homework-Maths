@@ -15,7 +15,7 @@ Static site on GitHub Pages from `main`, root folder (https://keldy2000-boop.git
 
 ## How index.html is organised
 - Screens (`<section>`, one shown at a time): `#pick` front page (year buttons + `#tests` Test section; app always opens here), `#home` (Maths / Spellings tabs), `#lesson` (one question: squared-paper pad, answer box, `#how` walkthrough), `#results`, `#spellTest`, `#spellResults`.
-- `Q4` / `Q6`: maths questions, each in its own function. Fields: `q` (HTML; `BOX` = answer box, `fr(n,d)` = fraction), `ans` (number, or `[top,bottom]` with `frac:true`), `hint`, optional `special` (messages for common wrong answers), `say` (step texts, last is "Your turn!"), `draw(s)` (HTML for step `s`).
+- `Q4` / `Q6`: maths questions, each in its own function. Fields: `q` (HTML; `BOX` = answer box, `fr(n,d)` = fraction), `ans` (number, or `[top,bottom]` with `frac:true`), `hint`, optional `special` (messages for common wrong answers), optional `rem:[quotient,remainder]` (division with a remainder: also accepts answers like `565 r 2`, and the box gets a text keyboard), `say` (step texts, last is "Your turn!"), `draw(s)` (HTML for step `s`).
 - `SPELL4` / `SPELL6`: `{focus, words:[{w, m, s}]}` (`s` has `______` for the word). `TOPICS4` / `TOPICS6`: topic groups by 1-based question number.
 - `YEARS` ties each year together (Year 4: stacked fraction boxes + read-aloud; Year 6 types fractions like `1 3/4`). `TESTS`: front-page questions (`opts`, `ans` index, `why` per wrong card, `say`/`draw`).
 - Progress is in each device's `localStorage`: `y4-*` / `y6-*`, `hh-year`, `hh-test`. Keep the one-off migration from older storage names.

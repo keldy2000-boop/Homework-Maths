@@ -37,6 +37,7 @@ Other files in this repo (`app.js`, `style.css`, `visuals.js`, `homework/`, `too
   - `ans`: a number, or `[top, bottom]` for fractions, which also need `frac:true`.
   - `hint`: shown after the help unlocks.
   - `special`: optional messages for common wrong answers, for example `{243: "…"}`.
+  - `rem`: optional, for divisions that don't come out exactly. With `rem:[565,2]` and `ans:565.25`, both `565 r 2` and `565.25` are accepted.
   - `say`: an array of step texts. The last step is the "Your turn!" step.
   - `draw(s)`: returns the HTML for step `s`, built with that module's helpers (`life`, `pen`, `colm`, `bar` and others).
 - `SPELL4` and `SPELL6` hold the spelling lists: `{focus:'inter', words:[{w, m, s}]}`, where `m` is the meaning and `s` is a sentence with `______` where the word goes.

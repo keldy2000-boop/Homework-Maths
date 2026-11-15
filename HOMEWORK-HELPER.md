@@ -34,7 +34,7 @@ Other files in this repo (`app.js`, `style.css`, `visuals.js`, `homework/`, `too
 
 - `Q4` and `Q6` hold the maths questions. Each is wrapped in its own function, so its drawing helpers don't clash. A question looks like this:
   - `q`: the question as HTML. `BOX` makes an empty answer box and `fr(n,d)` makes a fraction.
-  - `ans`: a number, or `[top, bottom]` for fractions, which also need `frac:true`.
+  - `ans`: a number, or `[top, bottom]` for fractions, which also need `frac:true`. A negative fraction is written `[-9, 6]` and typed with a minus sign, like `-3/2`. For fractions, `special` keys look like `'3/2'` (simplified).
   - `hint`: shown after the help unlocks.
   - `special`: optional messages for common wrong answers, for example `{243: "…"}`.
   - `rem`: optional, for divisions that don't come out exactly. With `rem:[565,2]` and `ans:565.25`, both `565 r 2` and `565.25` are accepted.

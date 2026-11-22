@@ -71,7 +71,7 @@ for (const y of ['y4', 'y6']) {
   const n = w.eval('SPS.run.order.length');
   for (let k = 0; k < n; k++) {
     const word = w.eval('curW().w');
-    word.split('').forEach(c => d.querySelector(`#spKb [data-k="${c}"]`).click());
+    word.toLowerCase().split('').forEach(c => d.querySelector(`#spKb [data-k="${c}"]`).click());
     $('spCheck').click(); $('spNext').click();
   }
   ok(!$('spellResults').hidden && $('sprScore').textContent === String(n), `${y}: spelling test full marks shows ${n}/${n}`);
